@@ -1,8 +1,8 @@
-# 🚀 **Finzio** - Smart Expense Tracker
+# 🚀 **HisabKitab** - Smart Expense Tracker
 
 <div align="center">
 
-![Finzio Logo](https://img.shields.io/badge/💰-FINZIO-blue?style=for-the-badge&labelColor=000000)
+![HisabKitab Logo](https://img.shields.io/badge/💰-HisabKitab-blue?style=for-the-badge&labelColor=000000)
 
 **Your Personal Finance Command Center**
 
@@ -18,9 +18,9 @@
 
 ---
 
-## ✨ **Why Finzio?**
+## ✨ **Why HisabKitab?**
 
-Transform your financial chaos into clarity with **Finzio** - a next-generation expense tracker that doesn't just store your data, but intelligently processes it using enterprise-grade technologies.
+Transform your financial chaos into clarity with **HisabKitab** - a next-generation expense tracker that doesn't just store your data, but intelligently processes it using enterprise-grade technologies.
 
 > 🎯 **Built for scale** • ⚡ **Lightning fast** • 🔐 **Bank-level security** • 📊 **Actionable insights**
 
@@ -33,12 +33,14 @@ Transform your financial chaos into clarity with **Finzio** - a next-generation 
 <td width="50%">
 
 ### 🔐 **Smart Authentication**
+
 - JWT-powered secure login
 - Redis session caching
 - Auto token refresh
 - Social login ready
 
 ### 💸 **Expense Intelligence**
+
 - Smart categorization
 - Bulk import/export
 - Duplicate detection
@@ -48,12 +50,14 @@ Transform your financial chaos into clarity with **Finzio** - a next-generation 
 <td width="50%">
 
 ### 📊 **Real-time Analytics**
+
 - Interactive dashboards
 - Spending predictions
 - Budget alerts
 - Custom date ranges
 
 ### 📧 **Automated Reports**
+
 - Weekly/Monthly summaries
 - Email notifications
 - PDF exports
@@ -75,7 +79,7 @@ graph TB
     B --> E[🐰 RabbitMQ]
     E --> F[📧 Email Worker]
     E --> G[📊 Analytics Worker]
-    
+
     style A fill:#61DAFB,stroke:#000,color:#000
     style B fill:#68A063,stroke:#000,color:#fff
     style C fill:#4EA94B,stroke:#000,color:#fff
@@ -83,22 +87,23 @@ graph TB
     style E fill:#FF6600,stroke:#000,color:#fff
 ```
 
-| 🎯 **Component** | 🛠️ **Technology** | 💡 **Purpose** |
-|------------------|-------------------|----------------|
-| **Frontend** | React + Tailwind CSS | Beautiful, responsive UI with real-time updates |
-| **API Gateway** | Node.js + Express | RESTful API with middleware pipeline |
-| **Database** | MongoDB | Flexible document storage for complex financial data |
-| **Cache Layer** | Redis | Sub-second response times for frequent queries |
-| **Job Queue** | RabbitMQ | Reliable background processing for heavy tasks |
+| 🎯 **Component** | 🛠️ **Technology**    | 💡 **Purpose**                                       |
+| ---------------- | -------------------- | ---------------------------------------------------- |
+| **Frontend**     | React + Tailwind CSS | Beautiful, responsive UI with real-time updates      |
+| **API Gateway**  | Node.js + Express    | RESTful API with middleware pipeline                 |
+| **Database**     | MongoDB              | Flexible document storage for complex financial data |
+| **Cache Layer**  | Redis                | Sub-second response times for frequent queries       |
+| **Job Queue**    | RabbitMQ             | Reliable background processing for heavy tasks       |
 
 ---
 
 ## 🎯 **Quick Start Guide**
 
 ### 📋 **Prerequisites**
+
 ```bash
 # Required Stack
-✅ Node.js 18+ 
+✅ Node.js 18+
 ✅ MongoDB 6.0+
 ✅ Redis 7.0+
 ✅ RabbitMQ 3.11+
@@ -108,6 +113,7 @@ graph TB
 ### 🚀 **Lightning Setup**
 
 **Option 1: Docker Magic** ✨
+
 ```bash
 git clone https://github.com/mailmeatdaarshan/finzio.git
 cd finzio
@@ -116,6 +122,7 @@ docker-compose up -d
 ```
 
 **Option 2: Manual Setup** 🔧
+
 ```bash
 # 1️⃣ Clone & Install
 git clone https://github.com/mailmeatdarshan/finzio.git
@@ -132,6 +139,7 @@ npm run client:dev      # Starts frontend
 ```
 
 ### 🔧 **Environment Variables**
+
 ```bash
 # 🔐 Security
 JWT_SECRET=your_super_secret_key_here
@@ -162,12 +170,15 @@ CLIENT_URL=http://localhost:5173
 <div align="center">
 
 ### 💰 **Smart Expense Tracking**
+
 ![Expense Management](https://via.placeholder.com/600x300/4EA94B/FFFFFF?text=Smart+Expense+Tracking)
 
 ### 📈 **Beautiful Analytics**
+
 ![Analytics Dashboard](https://via.placeholder.com/600x300/61DAFB/000000?text=Real-time+Analytics)
 
 ### 📧 **Automated Insights**
+
 ![Email Reports](https://via.placeholder.com/600x300/FF6600/FFFFFF?text=Automated+Reports)
 
 </div>
@@ -214,7 +225,7 @@ We love contributors! Check out our [Contributing Guide](CONTRIBUTING.md) to get
 # 🔧 Create feature branch
 git checkout -b feature/amazing-feature
 
-# 💾 Commit changes  
+# 💾 Commit changes
 git commit -m "Add amazing feature"
 
 # 📤 Push to branch
