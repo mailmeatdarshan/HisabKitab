@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* CSS (styles.css) */
+.timer-app {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+}
+.buttons button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.start-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+.stop-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
