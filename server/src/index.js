@@ -1,20 +1,36 @@
 const express = require('express');
-const cors = require("cors");
-const { ServerConfig, ConnectDB } = require('./config');
+const  cors = require( "cors");
+const { ServerConfig, ConnectDB,RedisConfig,Queue} = require('./config');
+const {RedisStore} = require('connect-redis')
+
+const session = require('express-session');
 const apiRoutes = require('./routes');
 
 const app = express();
 
-// Connect to the database
-ConnectDB();
-
-// Middleware
-app.use(cors({ origin: ServerConfig.CORS_ORIGIN }));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API Routes
+
+const sessionMiddleware = session({
+    store: new RedisStore({ client: RedisConfig }),
+    secret:  'mysecret123',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, 
+        httpOnly: true,
+        maxAge: 900000,
+    },
+});
+
+app.use(sessionMiddleware);
 app.use('/api', apiRoutes);
 
-// Export the app for Vercel
-module.exports = app;
+app.listen(ServerConfig.PORT, async() => {
+    await ConnectDB();
+    console.log(`Successfully started the server on PORT : ${ServerConfig.PORT}`);
+    await Queue.rabbitmqConnect();
+    console.log("Queue is up")
+});
