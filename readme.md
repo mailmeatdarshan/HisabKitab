@@ -14,7 +14,7 @@
 [![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 [![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white)](https://rabbitmq.com/)
 
-[🎯 **Live Demo**](https://your-demo-link.com) | [📚 **Documentation**](https://your-docs-link.com) | [🐛 **Report Bug**](https://github.com/your-username/finzio/issues)
+[🎯 **Live Demo**](https://drive.google.com/file/d/1MnV25t84s772plsuu7QHE_aSKrWRDpDQ/view?usp=sharing) | [📚 **Documentation**](https://mailmeatdarshan.github.io/HisabKitabShowCase/) | [🐛 **Report Bug**](https://github.com/mailmeatdarshan/finzio/issues)
 
 </div>
 
@@ -172,6 +172,7 @@ CORS_ORIGIN=http://localhost:5173
 You'll need two separate terminals in your Codespace to run the backend and frontend.
 
 **Terminal 1: Start the Backend**
+
 ```bash
 cd server
 npm install
@@ -179,6 +180,7 @@ npm run dev
 ```
 
 **Terminal 2: Start the Frontend**
+
 ```bash
 cd client
 npm install
@@ -246,17 +248,21 @@ CLIENT_URL=http://localhost:5173
 
 <div align="center">
 
-### 💰 **Smart Expense Tracking**
+### 📈 **Minimalistic Login Page**
 
-![Expense Management](https://via.placeholder.com/600x300/4EA94B/FFFFFF?text=Smart+Expense+Tracking)
+![Analytics Dashboard](./client/public/login.png)
 
-### 📈 **Beautiful Analytics**
+### 💰 **Smart Expense Tracking & Analytics**
 
-![Analytics Dashboard](https://via.placeholder.com/600x300/61DAFB/000000?text=Real-time+Analytics)
+![Expense Management](./client/public/expensetracker.png)
+
+### 📧 **Create Record With Ease**
+
+![Email Reports](./client/public/record.png)
 
 ### 📧 **Automated Insights**
 
-![Email Reports](https://via.placeholder.com/600x300/FF6600/FFFFFF?text=Automated+Reports)
+![Email Reports](./client/public/records.png)
 
 </div>
 
@@ -324,8 +330,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Made with ❤️ by [Darshan](https://github.com/mailmeatdarshan)**
 
 **A collaborative team project featuring:**
+
 - **[Darshan](https://github.com/mailmeatdarshan)** - Lead Developer
-- **[Muskan](https://github.com/muskan-username)** - Frontend Developer  
+- **[Muskan](https://github.com/muskan-username)** - Frontend Developer
 - **[Shakshi](https://github.com/shakshi-username)** - Backend Developer
 - **[Shubham](https://github.com/shubham-username)** - Full Stack Developer
 
