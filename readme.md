@@ -329,13 +329,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ by [Darshan](https://github.com/mailmeatdarshan)**
 
-**A collaborative team project featuring:**
-
-- **[Darshan](https://github.com/mailmeatdarshan)** - Lead Developer
-- **[Muskan](https://github.com/muskan-username)** - Frontend Developer
-- **[Shakshi](https://github.com/shakshi-username)** - Backend Developer
-- **[Shubham](https://github.com/shubham-username)** - Full Stack Developer
-
 [⭐ Star this repo](https://github.com/your-username/finzio/stargazers) • [🐛 Report issues](https://github.com/your-username/finzio/issues) • [💡 Request features](https://github.com/your-username/finzio/issues/new)
 
 [![GitHub stars](https://img.shields.io/github/stars/your-username/finzio?style=social)](https://github.com/your-username/finzio/stargazers)
