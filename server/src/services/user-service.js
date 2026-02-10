@@ -1,111 +1,152 @@
-const AppErrors = require('../utils/errors/app-errors');
-const {UserRepository} = require('../repositories');
-const { default: mongoose } = require('mongoose');
-const { StatusCodes } = require('http-status-codes');
-const {Auth}= require('../utils/common');
-const ServerConfig = require('../config/server-config');
-const redisClient = require('../config/redis-client-config');
+const AppErrors = require("../utils/errors/app-errors");
+const { UserRepository } = require("../repositories");
+const { default: mongoose } = require("mongoose");
+const { StatusCodes } = require("http-status-codes");
+const { Auth } = require("../utils/common");
+const ServerConfig = require("../config/server-config");
+const { getRedisClient } = require("../config/redis-client-config");
 const userRepo = new UserRepository();
 
-
-
-async function createUser(data){
+async function createUser(data) {
     try {
         const user = await userRepo.create(data);
-            return user;
+        return user;
     } catch (error) {
         let explaination = [];
-    
-       if(error instanceof mongoose.Error.ValidationError){
-        Object.values(error.errors).map(err => {
-            const result = {
-                field: err.path,
-                message:err.message
-            };
-            return explaination.push(result);
-        })
 
-        throw new AppErrors(explaination, StatusCodes.BAD_REQUEST);
-      
-       }
+        if (error instanceof mongoose.Error.ValidationError) {
+            Object.values(error.errors).map((err) => {
+                const result = {
+                    field: err.path,
+                    message: err.message,
+                };
+                return explaination.push(result);
+            });
 
-       // Duplicate Value
-       if(error.name == 'MongoServerError' && error.errorResponse.code == 11000){ 
-       throw new AppErrors('Duplicate email found. Please enter unique email', StatusCodes.CONFLICT);
-       }
-      
-       
-        throw new AppErrors("Something went wrong in the User-service: createUser", StatusCodes.INTERNAL_SERVER_ERROR);
-        
+            throw new AppErrors(explaination, StatusCodes.BAD_REQUEST);
+        }
+
+        // Duplicate Value
+        if (error.name == "MongoServerError" && error.errorResponse.code == 11000) {
+            throw new AppErrors(
+                "Duplicate email found. Please enter unique email",
+                StatusCodes.CONFLICT
+            );
+        }
+
+        throw new AppErrors(
+            "Something went wrong in the User-service: createUser",
+            StatusCodes.INTERNAL_SERVER_ERROR
+        );
     }
 }
 
-
-async function signIn(data){
+async function signIn(data) {
     try {
         const userResponse = await userRepo.getUserByEmail(data.email);
-        if(!userResponse){
-            throw new AppErrors("user is not found for given email", StatusCodes.BAD_REQUEST)
-        }
-       
-        const userPassword = data.password;
-        const encryptPassword = userResponse.password;
-        const isPasswordMatch = Auth.checkPassword(userPassword,encryptPassword);
-       
-        if(!isPasswordMatch){
-            throw new AppErrors("Password is mismatched or incorrect!", StatusCodes.BAD_REQUEST);
+        if (!userResponse) {
+            throw new AppErrors(
+                "user is not found for given email",
+                StatusCodes.BAD_REQUEST
+            );
         }
 
-        const jwtToken = Auth.createToken({id:userResponse.id}, ServerConfig.SECRET_KEY, {expiresIn: ServerConfig.EXPIRE_IN});
-       const decoded = Auth.verifyToken(jwtToken, ServerConfig.SECRET_KEY);
-        const ttl = decoded.exp - Math.floor(Date.now() / 1000);
-        await redisClient.setEx(`auth:${jwtToken}`, ttl, JSON.stringify(decoded));
+        const userPassword = data.password;
+        const encryptPassword = userResponse.password;
+        const isPasswordMatch = Auth.checkPassword(userPassword, encryptPassword);
+
+        if (!isPasswordMatch) {
+            throw new AppErrors(
+                "Password is mismatched or incorrect!",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        const jwtToken = Auth.createToken(
+            userResponse._id,
+            ServerConfig.SECRET_KEY,
+            { expiresIn: ServerConfig.EXPIRE_IN }
+        );
+
+        const redisClient = getRedisClient();
+        if (redisClient) {
+            const decoded = Auth.verifyToken(jwtToken, ServerConfig.SECRET_KEY);
+            const ttl = decoded.exp - Math.floor(Date.now() / 1000);
+            await redisClient.setEx(
+                `auth:${jwtToken}`,
+                ttl,
+                JSON.stringify(decoded)
+            );
+        }
+
         return jwtToken;
     } catch (error) {
         console.log(error);
         throw error;
-        
     }
 }
 
-
-async function isAuthenicated(token){
+async function isAuthenicated(token) {
     try {
         if (!token) {
-            throw new AppErrors('JWT token is missing', StatusCodes.UNAUTHORIZED);
+            throw new AppErrors("JWT token is missing", StatusCodes.UNAUTHORIZED);
         }
+
+        const redisClient = getRedisClient();
+        if (!redisClient) {
+            // Fallback: verify token directly if Redis is unavailable
+            const decoded = Auth.verifyToken(token, ServerConfig.SECRET_KEY);
+            const user = await userRepo.get(decoded.id);
+            if (!user) {
+                throw new AppErrors("user is not found", StatusCodes.BAD_REQUEST);
+            }
+            return decoded;
+        }
+
         const cachedToken = await redisClient.get(`auth:${token}`);
-        console.log(cachedToken)
-       const response = JSON.parse(cachedToken);
-        if (!response) {
-            throw new AppErrors('JWT token is expired or invalid', StatusCodes.UNAUTHORIZED);
+        if (!cachedToken) {
+            throw new AppErrors(
+                "JWT token is expired or invalid",
+                StatusCodes.UNAUTHORIZED
+            );
         }
-        const user = await userRepo.get(response.id.id);
+
+        const response = JSON.parse(cachedToken);
+        const user = await userRepo.get(response.id);
         if (!user) {
             throw new AppErrors("user is not found", StatusCodes.BAD_REQUEST);
         }
         return response;
-
     } catch (error) {
         console.log(error);
-        if (error.name === 'JsonWebTokenError') {
-            throw new AppErrors('Invalid JWT Token', StatusCodes.BAD_REQUEST);
+        if (error.name === "JsonWebTokenError") {
+            throw new AppErrors("Invalid JWT Token", StatusCodes.BAD_REQUEST);
         }
-        if (error.name === 'TokenExpiredError') {
-            throw new AppErrors('JWT token Expired', StatusCodes.UNAUTHORIZED);
+        if (error.name === "TokenExpiredError") {
+            throw new AppErrors("JWT token Expired", StatusCodes.UNAUTHORIZED);
         }
         throw error;
     }
 }
 
-async function logOut(token){
+async function logOut(token) {
     try {
         if (!token) {
-            throw new AppErrors('JWT token is missing', StatusCodes.UNAUTHORIZED);
+            throw new AppErrors("JWT token is missing", StatusCodes.UNAUTHORIZED);
         }
+
+        const redisClient = getRedisClient();
+        if (!redisClient) {
+            // Without Redis, we can't invalidate JWTs server-side
+            return true;
+        }
+
         const cachedToken = await redisClient.get(`auth:${token}`);
         if (!cachedToken) {
-            throw new AppErrors('JWT token is expired or invalid', StatusCodes.UNAUTHORIZED);
+            throw new AppErrors(
+                "JWT token is expired or invalid",
+                StatusCodes.UNAUTHORIZED
+            );
         }
         await redisClient.del(`auth:${token}`);
         return true;
@@ -115,9 +156,9 @@ async function logOut(token){
     }
 }
 
-module.exports={
+module.exports = {
     createUser,
     signIn,
-    isAuthenicated,  
-    logOut 
-}
+    isAuthenicated,
+    logOut,
+};

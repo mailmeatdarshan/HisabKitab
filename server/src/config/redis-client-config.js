@@ -1,18 +1,34 @@
 const { createClient } = require("redis");
-const {REDIS_URL} = require('./server-config');
-const redisClient = createClient({
-  url: REDIS_URL,
-});
+const { REDIS_URL } = require("./server-config");
 
-redisClient.on('error', (err) => console.error('Redis Error:', err));
+let redisClient = null;
 
-(async () => {
-  try {
-    await redisClient.connect();
-    console.log('Connected to Redis Cloud');
-  } catch (error) {
-    console.error('Failed to connect to Redis:', error);
+async function connectRedis() {
+  if (!REDIS_URL) {
+    console.warn("⚠️  REDIS_URL not set — Redis features will be unavailable");
+    return null;
   }
-})();
 
-module.exports = redisClient;
+  try {
+    redisClient = createClient({ url: REDIS_URL });
+
+    redisClient.on("error", (err) =>
+      console.error("Redis Error:", err.message)
+    );
+
+    await redisClient.connect();
+    console.log("Connected to Redis");
+    return redisClient;
+  } catch (error) {
+    console.warn("⚠️  Failed to connect to Redis:", error.message);
+    console.warn("⚠️  Server will continue without Redis — session/cache features unavailable");
+    redisClient = null;
+    return null;
+  }
+}
+
+function getRedisClient() {
+  return redisClient;
+}
+
+module.exports = { connectRedis, getRedisClient };

@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api/v1/",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1/",
 });
-
 
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
@@ -13,13 +12,12 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/login"; // force redirect to login
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

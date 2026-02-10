@@ -17,8 +17,13 @@ const expanseSchema = new Schema({
   note: {
     type: String,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
-const Expanse = mongoose.model('Expanse',expanseSchema);
+const Expanse = mongoose.model("Expanse", expanseSchema);
 
 module.exports = Expanse;

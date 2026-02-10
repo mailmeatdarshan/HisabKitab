@@ -1,26 +1,32 @@
-const redisClient = require("../config/redis-client-config");
+const { getRedisClient } = require("../config/redis-client-config");
 const { ExpanseRepository } = require("../repositories");
 const AppError = require("../utils/errors/app-errors");
 const { StatusCodes } = require("http-status-codes");
 const expanseRepo = new ExpanseRepository();
+
 async function addExpanse(data) {
-try {
+  try {
     const exp = await expanseRepo.create(data);
     const dateFormat = exp.Date;
     const month = dateFormat.toISOString().slice(0, 7);
     const key = `summary:${data.userId}:${month}`;
-    const cache = await redisClient.get(key);
-    if (cache) {
+
+    const redisClient = getRedisClient();
+    if (redisClient) {
+      const cache = await redisClient.get(key);
+      if (cache) {
         await redisClient.del(key);
+      }
     }
+
     return exp;
-} catch (error) {
+  } catch (error) {
     console.log(error);
     throw new AppError(
-        "Something went wrong in the addExpanse service",
-        StatusCodes.INTERNAL_SERVER_ERROR
+      "Something went wrong in the addExpanse service",
+      StatusCodes.INTERNAL_SERVER_ERROR
     );
-}
+  }
 }
 
 async function getExpanses() {
@@ -60,17 +66,25 @@ async function getTotalExpanses(data) {
   try {
     const monthKey = data.month ? data.month.slice(0, 7) : "";
     const key = `summary:${data.userId}:${monthKey}`;
-    const cache = await redisClient.get(key);
-    if (cache) {
-      return JSON.parse(cache);
-    } else {
-      const results = await expanseRepo.getTotalSummary({
-        ...data,
-        month: monthKey,
-      });
-      await redisClient.set(key, JSON.stringify(results));
-      return results;
+
+    const redisClient = getRedisClient();
+    if (redisClient) {
+      const cache = await redisClient.get(key);
+      if (cache) {
+        return JSON.parse(cache);
+      }
     }
+
+    const results = await expanseRepo.getTotalSummary({
+      ...data,
+      month: monthKey,
+    });
+
+    if (redisClient) {
+      await redisClient.set(key, JSON.stringify(results));
+    }
+
+    return results;
   } catch (error) {
     console.log(error);
     throw new AppError(
