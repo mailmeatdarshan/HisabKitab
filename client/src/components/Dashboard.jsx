@@ -20,7 +20,7 @@ const months = [
   "Dec",
 ];
 
-const Dashboard = ({ records }) => {
+const Dashboard = ({ records, onDelete, onRefresh }) => {
   const [monthFilter, setMonthFilter] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,7 +29,7 @@ const Dashboard = ({ records }) => {
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [filteredRecordsChart, setFilteredRecordsChart] = useState([]);
   const [dateFilterChart, setDateFilterChart] = useState("");
-  const [loading, setLoading] = useState(false); // Loader state
+  const [loading, setLoading] = useState(false);
   const isChart = location.pathname === "/";
 
   const handleFilterRecords = async () => {
@@ -183,6 +183,8 @@ const Dashboard = ({ records }) => {
           categoryFilter={categoryFilter}
           dateFilter={dateFilter}
           filteredRecords={filteredRecords}
+          onDelete={onDelete}
+          onRefresh={onRefresh}
         />
       )}
     </div>

@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/data-access";
 
-export default function RecordFormModal({ isOpen, onClose }) {
+export default function RecordFormModal({ isOpen, onClose, onRecordAdded }) {
   const [form, setForm] = useState({
     amount: "",
     category: "",
@@ -10,8 +9,6 @@ export default function RecordFormModal({ isOpen, onClose }) {
     note: ""
   });
   const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
 
   function updateForm(value) {
     setForm((prev) => ({ ...prev, ...value }));
@@ -29,16 +26,11 @@ export default function RecordFormModal({ isOpen, onClose }) {
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Authentication token is missing. Please log in again.");
-        navigate("/login");
         return;
       }
       const response = await axiosInstance.post("/expanses", details);
-      if (response.status === 401) {
-        alert("Unauthorized access.");
-        return;
-      }
       if (response.status === 201) {
-        navigate(0);
+        if (onRecordAdded) onRecordAdded();
       }
     } catch (error) {
       console.error('A problem occurred with your fetch operation: ', error);
@@ -109,7 +101,7 @@ export default function RecordFormModal({ isOpen, onClose }) {
             name="note"
             id="note"
             className="block w-full px-5 py-3 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white text-black transition"
-            placeholder="Note"
+            placeholder="Note (optional)"
             value={form.note}
             onChange={(e) => updateForm({ note: e.target.value })}
             disabled={loading}
