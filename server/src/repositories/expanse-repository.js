@@ -7,10 +7,47 @@ class ExpanseRepository extends CrudRepository {
         super(Expanse);
     }
 
+    async getAllByUser(userId) {
+        try {
+            const results = await Expanse.find({ userId }).sort({ Date: -1 }).exec();
+            return results;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
     async getFilterBy(data) {
         try {
             const category = await Expanse.find(data).exec();
             return category;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    async deleteById(id, userId) {
+        try {
+            const result = await Expanse.findOneAndDelete({
+                _id: id,
+                userId: new mongoose.Types.ObjectId(userId),
+            });
+            return result;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    async updateById(id, userId, data) {
+        try {
+            const result = await Expanse.findOneAndUpdate(
+                { _id: id, userId: new mongoose.Types.ObjectId(userId) },
+                data,
+                { new: true }
+            );
+            return result;
         } catch (error) {
             console.log(error);
             throw error;

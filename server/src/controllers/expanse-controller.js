@@ -25,7 +25,8 @@ async function createExpanses(req, res) {
 
 async function getExpanses(req, res) {
     try {
-        const expanse = await ExpanseService.getExpanses();
+        const userId = req.user.id;
+        const expanse = await ExpanseService.getExpanses(userId);
         const successResponse = createSuccessResponse();
         successResponse.data = expanse;
         return res.status(StatusCodes.OK).json(successResponse);
@@ -54,7 +55,9 @@ async function getSummaryByCategory(req, res) {
 
 async function filterExpansesByCategory(req, res) {
     try {
-        const expanse = await ExpanseService.filterBy(req.query);
+        const userId = req.user.id;
+        const query = { ...req.query, userId };
+        const expanse = await ExpanseService.filterBy(query);
         const successResponse = createSuccessResponse();
         successResponse.data = expanse;
         return res.status(StatusCodes.OK).json(successResponse);
@@ -65,9 +68,48 @@ async function filterExpansesByCategory(req, res) {
     }
 }
 
+async function deleteExpanse(req, res) {
+    try {
+        const userId = req.user.id;
+        const expenseId = req.params.id;
+        const result = await ExpanseService.deleteExpanse(expenseId, userId);
+        const successResponse = createSuccessResponse();
+        successResponse.data = result;
+        successResponse.message = "Expense deleted successfully";
+        return res.status(StatusCodes.OK).json(successResponse);
+    } catch (error) {
+        const errorResponse = createErrorResponse();
+        errorResponse.error = error;
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
+async function updateExpanse(req, res) {
+    try {
+        const userId = req.user.id;
+        const expenseId = req.params.id;
+        const result = await ExpanseService.updateExpanse(expenseId, userId, {
+            amount: req.body.amount,
+            category: req.body.category,
+            Date: req.body.Date,
+            note: req.body.note,
+        });
+        const successResponse = createSuccessResponse();
+        successResponse.data = result;
+        successResponse.message = "Expense updated successfully";
+        return res.status(StatusCodes.OK).json(successResponse);
+    } catch (error) {
+        const errorResponse = createErrorResponse();
+        errorResponse.error = error;
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
 module.exports = {
     createExpanses,
     getExpanses,
     filterExpansesByCategory,
     getSummaryByCategory,
+    deleteExpanse,
+    updateExpanse,
 };

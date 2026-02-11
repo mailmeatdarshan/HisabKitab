@@ -1,19 +1,20 @@
 const CrudRepository = require('./crud-repository');
-const {User} = require('../models');
+const { User } = require('../models');
 
-class UserRepository extends CrudRepository{
-    constructor(){
+class UserRepository extends CrudRepository {
+    constructor() {
         super(User);
     }
 
-    async getUserByEmail(data){
+    async getUserByEmail(data) {
         try {
-            const email = await User.findOne({email:data}).exec();
+            const email = await User.findOne({ email: data }).exec();
             return email;
         } catch (error) {
             console.log(error);
+            throw error;
         }
     }
 }
 
-module.exports=UserRepository;
+module.exports = UserRepository;

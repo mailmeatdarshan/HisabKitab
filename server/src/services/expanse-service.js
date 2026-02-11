@@ -29,9 +29,9 @@ async function addExpanse(data) {
   }
 }
 
-async function getExpanses() {
+async function getExpanses(userId) {
   try {
-    const exp = await expanseRepo.getAll();
+    const exp = await expanseRepo.getAllByUser(userId);
     return exp;
   } catch (error) {
     console.log(error);
@@ -51,12 +51,73 @@ async function filterBy(query) {
     if (query.Date) {
       filter.Date = new Date(query.Date);
     }
+    if (query.userId) {
+      filter.userId = query.userId;
+    }
     const exp = await expanseRepo.getFilterBy(filter);
     return exp;
   } catch (error) {
     console.log(error);
     throw new AppError(
       "Something went wrong in the filterByCategory service",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
+async function deleteExpanse(id, userId) {
+  try {
+    const result = await expanseRepo.deleteById(id, userId);
+    if (!result) {
+      throw new AppError(
+        "Expense not found or unauthorized",
+        StatusCodes.NOT_FOUND
+      );
+    }
+
+    // Invalidate cache for the month of the deleted expense
+    const redisClient = getRedisClient();
+    if (redisClient && result.Date) {
+      const month = result.Date.toISOString().slice(0, 7);
+      const key = `summary:${userId}:${month}`;
+      await redisClient.del(key);
+    }
+
+    return result;
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    console.log(error);
+    throw new AppError(
+      "Something went wrong in the deleteExpanse service",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
+async function updateExpanse(id, userId, data) {
+  try {
+    const result = await expanseRepo.updateById(id, userId, data);
+    if (!result) {
+      throw new AppError(
+        "Expense not found or unauthorized",
+        StatusCodes.NOT_FOUND
+      );
+    }
+
+    // Invalidate cache for the month of the updated expense
+    const redisClient = getRedisClient();
+    if (redisClient && result.Date) {
+      const month = result.Date.toISOString().slice(0, 7);
+      const key = `summary:${userId}:${month}`;
+      await redisClient.del(key);
+    }
+
+    return result;
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    console.log(error);
+    throw new AppError(
+      "Something went wrong in the updateExpanse service",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   }
@@ -98,5 +159,7 @@ module.exports = {
   addExpanse,
   getExpanses,
   filterBy,
+  deleteExpanse,
+  updateExpanse,
   getTotalExpanses,
 };
