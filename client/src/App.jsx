@@ -40,7 +40,7 @@ const App = () => {
   }, [fetchRecords]);
 
   return (
-    <div className="w-full p-6">
+    <div className="w-full p-3 md:p-6">
       <Navbar
         loading={loading}
         isOpen={isOpen}

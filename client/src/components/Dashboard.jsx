@@ -106,14 +106,17 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
 
   return (
     <div>
-      <div className="flex w-full justify-between items-center gap-4 pr-6">
-        <h3 className="text-lg font-semibold p-4">
+      {/* Header: title + filters + view toggles */}
+      <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center md:gap-4 pr-0 md:pr-6">
+        <h3 className="text-base md:text-lg font-semibold px-2 md:p-4">
           {isChart ? "Expanses Charts" : "Expanses Records"}
         </h3>
-        <div className="p-4 flex flex-col md:flex-row gap-4 items-center bg-gray-50 rounded-lg shadow mb-4">
+
+        {/* Filters */}
+        <div className="p-3 md:p-4 flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center bg-gray-50 rounded-lg shadow mb-2 md:mb-4">
           {!isChart ? (
             <select
-              className="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
+              className="border border-gray-300 rounded p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-slate-900 transition w-full sm:w-auto"
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
@@ -126,7 +129,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
             </select>
           ) : (
             <select
-              className="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              className="border border-gray-300 rounded p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-full sm:w-auto"
               value={monthFilter}
               onChange={handleMonthDropdownChange}
             >
@@ -141,7 +144,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
           {!isChart && (
             <input
               type="date"
-              className="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              className="border border-gray-300 rounded p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-full sm:w-auto"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
             />
@@ -150,26 +153,29 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
             <button
               type="button"
               onClick={handleFilterRecords}
-              className="border border-black bg-black  px-7 py-1.5 rounded hover:bg-white hover:text-black transition duration-300 ease-in-out text-white  cursor-pointer"
+              className="border border-black bg-black px-7 py-2 md:py-1.5 rounded hover:bg-white hover:text-black transition duration-300 ease-in-out text-white cursor-pointer text-sm md:text-base w-full sm:w-auto"
             >
               Filter
             </button>
           )}
         </div>
-        <div className="flex gap-4">
+
+        {/* View toggles */}
+        <div className="flex gap-4 px-2 md:px-0 pb-2 md:pb-0">
           <FileSpreadsheet
-            className="w-8 h-8 cursor-pointer hover:text-green-500"
+            className="w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-green-500"
             onClick={() => navigate("/recordlist")}
           />
           <ChartArea
-            className="w-8 h-8 cursor-pointer hover:text-red-500"
+            className="w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-red-500"
             onClick={() => navigate("/")}
           />
         </div>
       </div>
+
       {loading ? (
-        <div className="flex justify-center items-center h-64 mt-56">
-          <Loader className="text-lg w-20 h-20 font-semibold animate-spin" />
+        <div className="flex justify-center items-center h-40 md:h-64 mt-20 md:mt-56">
+          <Loader className="text-lg w-12 h-12 md:w-20 md:h-20 font-semibold animate-spin" />
         </div>
       ) : isChart ? (
         <SpreadChart

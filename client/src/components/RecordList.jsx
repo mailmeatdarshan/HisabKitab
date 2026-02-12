@@ -1,9 +1,28 @@
-import { Record } from "./Record";
+import { Record, RecordCard } from "./Record";
 
 export default function RecordList({ records, categoryFilter, dateFilter, filteredRecords, onDelete, onRefresh }) {
+  const displayRecords = (filteredRecords.length > 0 || categoryFilter || dateFilter) ? filteredRecords : records;
+  const isEmpty = displayRecords.length === 0 && (categoryFilter || dateFilter);
+
   return (
     <>
-      <div className="border rounded-lg overflow-hidden shadow bg-white">
+      {/* Mobile card layout */}
+      <div className="md:hidden flex flex-col gap-3">
+        {isEmpty ? (
+          <div className="text-center py-8 text-gray-500">No record found</div>
+        ) : displayRecords.length > 0 ? (
+          displayRecords.map((record) => (
+            <RecordCard key={record._id} record={record} onDelete={onDelete} onRefresh={onRefresh} />
+          ))
+        ) : (
+          records.map((record) => (
+            <RecordCard key={record._id} record={record} onDelete={onDelete} onRefresh={onRefresh} />
+          ))
+        )}
+      </div>
+
+      {/* Desktop table layout */}
+      <div className="hidden md:block border rounded-lg overflow-hidden shadow bg-white">
         <div className="relative w-full overflow-auto">
           <table className="w-full text-sm">
             <thead className="border-b bg-gray-100">

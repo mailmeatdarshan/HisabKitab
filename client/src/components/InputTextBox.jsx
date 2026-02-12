@@ -41,7 +41,7 @@ const InputTextBoxModal = ({ isOpen, onClose }) => {
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-2xl min-w-[480px] min-h-[400px] shadow-2xl p-10  relative flex flex-col"
+                className="bg-white rounded-2xl w-[92vw] max-w-md shadow-2xl p-5 md:p-10 relative flex flex-col"
                 onClick={e => e.stopPropagation()}
             >
                 <form className="flex flex-col flex-1" onSubmit={handleSubmit}>
