@@ -54,6 +54,9 @@ export default function Login() {
         transition={{ duration: 0.5 }}
         className="bg-white text-black p-8 rounded-2xl shadow-lg w-full max-w-md"
       >
+        <div className="flex justify-center mb-6">
+          <img src="/expenses.png" alt="HisabKitab Logo" className="h-16 w-16 md:h-20 md:w-20" />
+        </div>
         <h2 className="text-3xl font-bold mb-6 text-center">Welcome Back</h2>
 
         {/* Email */}

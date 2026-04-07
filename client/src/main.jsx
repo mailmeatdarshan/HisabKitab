@@ -12,6 +12,7 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SpendingCharts from "./components/SpendingCharts";
+import SplashScreen from "./components/SplashScreen";
 
 const router = createBrowserRouter([
   {
@@ -42,9 +43,19 @@ const router = createBrowserRouter([
   },
 ]);
 
+const Root = () => {
+  const [showSplash, setShowSplash] = React.useState(true);
+
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
+
+  return <RouterProvider router={router} />;
+};
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Root />
   </React.StrictMode>
 );
