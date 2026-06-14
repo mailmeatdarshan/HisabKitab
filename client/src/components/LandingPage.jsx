@@ -1,11 +1,22 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { isUserAuthenticated } from "../utils/local-storage-helper";
 import axiosInstance from "../utils/data-access";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const authenticated = isUserAuthenticated();
+  const hasVisited = localStorage.getItem("hisabkitab_visited_before");
+
+  useEffect(() => {
+    if (!hasVisited) {
+      localStorage.setItem("hisabkitab_visited_before", "true");
+    }
+  }, [hasVisited]);
+
+  if (hasVisited) {
+    return <Navigate to="/app" replace />;
+  }
 
   useEffect(() => {
     const handleMouseMove = (e) => {
