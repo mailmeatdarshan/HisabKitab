@@ -29,6 +29,14 @@ const router = createBrowserRouter([
         element: <RecordList />,
       },
       {
+        path: "/app/subscriptions",
+        element: <RecordList />,
+      },
+      {
+        path: "/app/debts",
+        element: <RecordList />,
+      },
+      {
         index: true, 
         element: <SpendingCharts />,
       },

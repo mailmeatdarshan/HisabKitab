@@ -66,7 +66,7 @@ export default function RecordFormModal({ isOpen, onClose, onRecordAdded }) {
         >
           &times;
         </button>
-        <h3 className="text-xl font-bold mb-8 text-black">Create Expanse Record</h3>
+        <h3 className="text-xl font-bold mb-8 text-black">Create Expense Record</h3>
         <form onSubmit={onSubmit} className="flex flex-col gap-6 flex-1">
           <input
             type="number"
@@ -118,7 +118,7 @@ export default function RecordFormModal({ isOpen, onClose, onRecordAdded }) {
             </button>
             <input
               type="submit"
-              value={loading ? "Saving..." : "Save Expanses Record"}
+              value={loading ? "Saving..." : "Save Expense Record"}
               className={`w-full bg-black text-white font-bold py-3 rounded-lg shadow hover:bg-white hover:text-black border-2 border-black transition cursor-pointer ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
               disabled={loading}
             />

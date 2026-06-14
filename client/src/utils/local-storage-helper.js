@@ -100,3 +100,59 @@ export const getGuestSummary = (records, dateStr) => {
 export const clearGuestRecords = () => {
   localStorage.removeItem("hisabkitab_guest_records");
 };
+
+export const getActiveUserPrefix = () => {
+  const token = localStorage.getItem("token");
+  if (!token) return "guest";
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.id || payload._id || payload.email || "user";
+  } catch (e) {
+    return "guest";
+  }
+};
+
+export const getBudget = () => {
+  const prefix = getActiveUserPrefix();
+  const data = localStorage.getItem(`hisabkitab_budget_${prefix}`);
+  return data ? parseInt(data, 10) : 0;
+};
+
+export const saveBudget = (amount) => {
+  const prefix = getActiveUserPrefix();
+  localStorage.setItem(`hisabkitab_budget_${prefix}`, amount.toString());
+};
+
+export const getSubscriptions = () => {
+  const prefix = getActiveUserPrefix();
+  const data = localStorage.getItem(`hisabkitab_subscriptions_${prefix}`);
+  if (!data) return [];
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    console.error("Failed to parse subscriptions", e);
+    return [];
+  }
+};
+
+export const saveSubscriptions = (subs) => {
+  const prefix = getActiveUserPrefix();
+  localStorage.setItem(`hisabkitab_subscriptions_${prefix}`, JSON.stringify(subs));
+};
+
+export const getDebts = () => {
+  const prefix = getActiveUserPrefix();
+  const data = localStorage.getItem(`hisabkitab_debts_${prefix}`);
+  if (!data) return [];
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    console.error("Failed to parse debts", e);
+    return [];
+  }
+};
+
+export const saveDebts = (debts) => {
+  const prefix = getActiveUserPrefix();
+  localStorage.setItem(`hisabkitab_debts_${prefix}`, JSON.stringify(debts));
+};
