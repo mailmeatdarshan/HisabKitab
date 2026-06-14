@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axiosInstance from "../utils/data-access";
+import { isUserAuthenticated, addGuestRecord } from "../utils/local-storage-helper";
 
 export default function RecordFormModal({ isOpen, onClose, onRecordAdded }) {
   const [form, setForm] = useState({
@@ -23,13 +24,13 @@ export default function RecordFormModal({ isOpen, onClose, onRecordAdded }) {
     }
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Authentication token is missing. Please log in again.");
-        return;
-      }
-      const response = await axiosInstance.post("/expanses", details);
-      if (response.status === 201) {
+      if (isUserAuthenticated()) {
+        const response = await axiosInstance.post("/expanses", details);
+        if (response.status === 201) {
+          if (onRecordAdded) onRecordAdded();
+        }
+      } else {
+        addGuestRecord(details);
         if (onRecordAdded) onRecordAdded();
       }
     } catch (error) {

@@ -17,11 +17,7 @@ import SplashScreen from "./components/SplashScreen";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <ProtectedRoute>
-        <App />
-      </ProtectedRoute>
-    ),
+    element: <App />,
     children: [
       {
         path: "/recordlist",

@@ -4,6 +4,7 @@ import RecordList from "./RecordList";
 import SpreadChart from "../components/SpendingCharts";
 import { useState } from "react";
 import axiosInstance from "../utils/data-access";
+import { isUserAuthenticated, filterGuestRecords, getGuestSummary } from "../utils/local-storage-helper";
 
 const months = [
   "Jan",
@@ -40,29 +41,34 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
         setLoading(false);
         return;
       }
-      if (categoryFilter && dateFilter) {
-        const response = await axiosInstance.get(
-          `/expanses/filterBy?category=${categoryFilter}&Date=${dateFilter}`
-        );
-        const responseData = response.data;
-        setFilteredRecords(responseData.data || []);
-      } else if (categoryFilter) {
-        if (categoryFilter === "") {
-          setFilteredRecords(records);
-          setLoading(false);
-          return;
+      if (isUserAuthenticated()) {
+        if (categoryFilter && dateFilter) {
+          const response = await axiosInstance.get(
+            `/expanses/filterBy?category=${categoryFilter}&Date=${dateFilter}`
+          );
+          const responseData = response.data;
+          setFilteredRecords(responseData.data || []);
+        } else if (categoryFilter) {
+          if (categoryFilter === "") {
+            setFilteredRecords(records);
+            setLoading(false);
+            return;
+          }
+          const response = await axiosInstance.get(
+            `/expanses/filterBy?category=${categoryFilter}`
+          );
+          const responseData = response.data;
+          setFilteredRecords(responseData.data || []);
+        } else if (dateFilter) {
+          const response = await axiosInstance.get(
+            `/expanses/filterBy?Date=${dateFilter}`
+          );
+          const responseData = response.data;
+          setFilteredRecords(responseData.data || []);
         }
-        const response = await axiosInstance.get(
-          `/expanses/filterBy?category=${categoryFilter}`
-        );
-        const responseData = response.data;
-        setFilteredRecords(responseData.data || []);
-      } else if (dateFilter) {
-        const response = await axiosInstance.get(
-          `/expanses/filterBy?Date=${dateFilter}`
-        );
-        const responseData = response.data;
-        setFilteredRecords(responseData.data || []);
+      } else {
+        const filtered = filterGuestRecords(records, categoryFilter, dateFilter);
+        setFilteredRecords(filtered);
       }
     } catch (error) {
       console.error(error);
@@ -84,11 +90,16 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
       const selectedDate = `${year}-${month}-01`;
       setDateFilterChart(selectedDate);
 
-      const response = await axiosInstance.get(
-        `/expanses/summary?Date=${selectedDate}`
-      );
-      const responseData = response.data;
-      setFilteredRecordsChart(responseData.data || []);
+      if (isUserAuthenticated()) {
+        const response = await axiosInstance.get(
+          `/expanses/summary?Date=${selectedDate}`
+        );
+        const responseData = response.data;
+        setFilteredRecordsChart(responseData.data || []);
+      } else {
+        const summary = getGuestSummary(records, selectedDate);
+        setFilteredRecordsChart(summary);
+      }
     } catch (error) {
       console.error(error);
       setDateFilterChart("");

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axiosInstance from "../utils/data-access";
+import { isUserAuthenticated, updateGuestRecord, deleteGuestRecord } from "../utils/local-storage-helper";
 
 // Card view for mobile
 export const RecordCard = ({ record, onDelete, onRefresh }) => {
@@ -19,7 +20,11 @@ export const RecordCard = ({ record, onDelete, onRefresh }) => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
     setLoading(true);
     try {
-      await axiosInstance.delete(`/expanses/${_id}`);
+      if (isUserAuthenticated()) {
+        await axiosInstance.delete(`/expanses/${_id}`);
+      } else {
+        deleteGuestRecord(_id);
+      }
       if (onDelete) onDelete(_id);
     } catch (error) {
       console.error("Delete failed:", error);
@@ -36,7 +41,11 @@ export const RecordCard = ({ record, onDelete, onRefresh }) => {
     }
     setLoading(true);
     try {
-      await axiosInstance.put(`/expanses/${_id}`, editForm);
+      if (isUserAuthenticated()) {
+        await axiosInstance.put(`/expanses/${_id}`, editForm);
+      } else {
+        updateGuestRecord(_id, editForm);
+      }
       setIsEditing(false);
       if (onRefresh) onRefresh();
     } catch (error) {
@@ -161,7 +170,11 @@ export const Record = ({ record, onDelete, onRefresh }) => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
     setLoading(true);
     try {
-      await axiosInstance.delete(`/expanses/${_id}`);
+      if (isUserAuthenticated()) {
+        await axiosInstance.delete(`/expanses/${_id}`);
+      } else {
+        deleteGuestRecord(_id);
+      }
       if (onDelete) onDelete(_id);
     } catch (error) {
       console.error("Delete failed:", error);
@@ -178,7 +191,11 @@ export const Record = ({ record, onDelete, onRefresh }) => {
     }
     setLoading(true);
     try {
-      await axiosInstance.put(`/expanses/${_id}`, editForm);
+      if (isUserAuthenticated()) {
+        await axiosInstance.put(`/expanses/${_id}`, editForm);
+      } else {
+        updateGuestRecord(_id, editForm);
+      }
       setIsEditing(false);
       if (onRefresh) onRefresh();
     } catch (error) {
