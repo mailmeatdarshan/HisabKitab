@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, CloudOff } from "lucide-react";
+import { Menu, X, CloudOff, Plus, Send } from "lucide-react";
 import Logout from "./Logout";
 import RecordFormModal from "./RecordForm";
 import InputTextBox from "./InputTextBox";
@@ -90,31 +90,37 @@ export default function Navbar({ isOpen, onClose, setIsOpen, loading, isSummaryO
         </button>
       </nav>
 
+      {/* Mobile action bar */}
+      <div className="flex md:hidden gap-3 mb-4">
+        <button
+          className={`flex-grow flex items-center justify-center gap-2 py-2.5 px-4 rounded text-sm font-semibold shadow-sm border border-black bg-black text-white hover:bg-white hover:text-black transition duration-300
+            ${loading
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer"
+            }`}
+          onClick={() => setIsOpen(true)}
+          disabled={loading}
+        >
+          <Plus className="w-4 h-4" />
+          Add Record
+        </button>
+        <button
+          className={`flex-grow flex items-center justify-center gap-2 py-2.5 px-4 rounded text-sm font-semibold shadow-sm border border-black bg-white text-black hover:bg-black hover:text-white transition duration-300
+            ${loading
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer"
+            }`}
+          onClick={handleSendSummaryClick}
+          disabled={loading}
+        >
+          <Send className="w-4 h-4" />
+          Send Summary
+        </button>
+      </div>
+
       {/* Mobile menu dropdown */}
       {menuOpen && (
         <div className="md:hidden flex flex-col gap-2 pb-4 border-b border-gray-200 mb-4 animate-in">
-          <button
-            className={`w-full text-left px-4 py-2.5 rounded text-sm font-medium
-              ${loading
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "border border-black bg-black text-white hover:bg-white hover:text-black transition duration-300 ease-in-out cursor-pointer"
-              }`}
-            onClick={() => { setIsOpen(true); setMenuOpen(false); }}
-            disabled={loading}
-          >
-            Add Record
-          </button>
-          <button
-            className={`w-full text-left px-4 py-2.5 rounded text-sm font-medium
-              ${loading
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "border border-black bg-black text-white hover:bg-white hover:text-black transition duration-300 ease-in-out cursor-pointer"
-              }`}
-            onClick={() => { handleSendSummaryClick(); setMenuOpen(false); }}
-            disabled={loading}
-          >
-            Send Summary
-          </button>
           <div className="mt-1 flex flex-col gap-2">
             {authenticated ? (
               <Logout />
