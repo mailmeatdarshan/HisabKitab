@@ -30,7 +30,7 @@ export default function Login() {
         const response = await axiosInstance.post("/auth/signin", { email, password });
         if (response.status === 200) {
           localStorage.setItem("token", response.data.data);
-          navigate("/");
+          navigate("/app");
         }
         setErrors({});
       } catch (err) {

@@ -31,7 +31,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
   const [filteredRecordsChart, setFilteredRecordsChart] = useState([]);
   const [dateFilterChart, setDateFilterChart] = useState("");
   const [loading, setLoading] = useState(false);
-  const isChart = location.pathname === "/";
+  const isChart = location.pathname === "/app";
 
   const handleFilterRecords = async () => {
     try {
@@ -175,11 +175,11 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
         <div className="flex gap-4 px-2 md:px-0 pb-2 md:pb-0">
           <FileSpreadsheet
             className="w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-green-500"
-            onClick={() => navigate("/recordlist")}
+            onClick={() => navigate("/app/recordlist")}
           />
           <ChartArea
             className="w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-red-500"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/app")}
           />
         </div>
       </div>

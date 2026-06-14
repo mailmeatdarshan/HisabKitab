@@ -13,3 +13,28 @@ body {
 *::after {
     box-sizing: border-box;
 }
+
+/* Landing Page Specific Styles */
+.landing-page-container {
+    min-height: 100vh;
+    background-color: #FFFFFF;
+    color: #1A1C1E;
+    font-family: 'Inter', sans-serif;
+    background-image: radial-gradient(#E2E8F0 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+.glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid #E2E8F0;
+}
+.inner-glow {
+    box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.05);
+}
+.data-thread {
+    stroke-dasharray: 4;
+    animation: dash 20s linear infinite;
+}
+@keyframes dash {
+    to { stroke-dashoffset: -1000; }
+}

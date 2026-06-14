@@ -13,14 +13,19 @@ import Signup from "./components/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SpendingCharts from "./components/SpendingCharts";
 import SplashScreen from "./components/SplashScreen";
+import LandingPage from "./components/LandingPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/app",
     element: <App />,
     children: [
       {
-        path: "/recordlist",
+        path: "/app/recordlist",
         element: <RecordList />,
       },
       {

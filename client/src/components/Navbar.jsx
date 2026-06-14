@@ -25,7 +25,7 @@ export default function Navbar({ isOpen, onClose, setIsOpen, loading, isSummaryO
     <div>
       <nav className="flex justify-between items-center mb-4 md:mb-6">
         <div className="flex items-center gap-3">
-          <NavLink to="/">
+          <NavLink to="/app">
             <img title="Home" alt="logo" className="h-12 w-12 md:h-20 md:w-20 inline" src="/expenses.png" />
           </NavLink>
           {!authenticated && (
