@@ -37,6 +37,10 @@ const router = createBrowserRouter([
         element: <RecordList />,
       },
       {
+        path: "/app/gullak",
+        element: <RecordList />,
+      },
+      {
         index: true, 
         element: <SpendingCharts />,
       },

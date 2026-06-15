@@ -1,9 +1,10 @@
-import { ChartArea, FileSpreadsheet, Loader, CreditCard, Edit2, Check, X, Users } from "lucide-react";
+import { ChartArea, FileSpreadsheet, Loader, CreditCard, Edit2, Check, X, Users, PiggyBank } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import RecordList from "./RecordList";
 import SpreadChart from "../components/SpendingCharts";
 import SubscriptionsPanel from "./SubscriptionsPanel";
 import DebtsPanel from "./DebtsPanel";
+import GullakPanel from "./GullakPanel";
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/data-access";
 import { isUserAuthenticated, filterGuestRecords, getGuestSummary, getBudget, saveBudget } from "../utils/local-storage-helper";
@@ -40,6 +41,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
   const isChart = location.pathname === "/app";
   const isSubscriptions = location.pathname === "/app/subscriptions";
   const isDebts = location.pathname === "/app/debts";
+  const isGullak = location.pathname === "/app/gullak";
 
   useEffect(() => {
     const b = getBudget();
@@ -442,11 +444,11 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
       {/* Header: title + filters + view toggles */}
       <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center md:gap-4 pr-0 md:pr-6 mb-4">
         <h3 className="text-base md:text-lg font-semibold px-2 md:py-4">
-          {isDebts ? "Udhaar (Lend/Borrow) Tracker" : isSubscriptions ? "Bills & Subscriptions" : isChart ? "Expense Charts" : "Expense Records"}
+          {isDebts ? "Udhaar (Lend/Borrow) Tracker" : isSubscriptions ? "Bills & Subscriptions" : isGullak ? "Gullak (Savings Goals)" : isChart ? "Expense Charts" : "Expense Records"}
         </h3>
 
-        {/* Filters (only show if not on subscriptions or debts panel) */}
-        {!isSubscriptions && !isDebts && (
+        {/* Filters (only show if not on subscriptions, debts, or gullak panel) */}
+        {!isSubscriptions && !isDebts && !isGullak && (
           <div className="p-3 md:p-4 flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center bg-gray-50 rounded-lg shadow mb-2 md:mb-4">
             {!isChart ? (
               <select
@@ -527,8 +529,13 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
             onClick={() => navigate("/app/subscriptions")}
             title="Bills & Subscriptions"
           />
+          <PiggyBank
+            className={`w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-amber-500 transition ${isGullak ? "text-amber-500 font-bold" : "text-gray-400"}`}
+            onClick={() => navigate("/app/gullak")}
+            title="Gullak (Savings Goals)"
+          />
           <FileSpreadsheet
-            className={`w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-green-600 transition ${!isChart && !isSubscriptions && !isDebts ? "text-green-600 font-bold" : "text-gray-400"}`}
+            className={`w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-green-600 transition ${!isChart && !isSubscriptions && !isDebts && !isGullak ? "text-green-600 font-bold" : "text-gray-400"}`}
             onClick={() => navigate("/app/recordlist")}
             title="Expenses Records"
           />
@@ -625,6 +632,11 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
         <DebtsPanel onRefresh={onRefresh} />
       ) : isSubscriptions ? (
         <SubscriptionsPanel
+          records={records}
+          onRefresh={onRefresh}
+        />
+      ) : isGullak ? (
+        <GullakPanel
           records={records}
           onRefresh={onRefresh}
         />

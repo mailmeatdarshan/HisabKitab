@@ -156,3 +156,20 @@ export const saveDebts = (debts) => {
   const prefix = getActiveUserPrefix();
   localStorage.setItem(`hisabkitab_debts_${prefix}`, JSON.stringify(debts));
 };
+
+export const getGullakGoals = () => {
+  const prefix = getActiveUserPrefix();
+  const data = localStorage.getItem(`hisabkitab_gullak_${prefix}`);
+  if (!data) return [];
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    console.error("Failed to parse Gullak goals", e);
+    return [];
+  }
+};
+
+export const saveGullakGoals = (goals) => {
+  const prefix = getActiveUserPrefix();
+  localStorage.setItem(`hisabkitab_gullak_${prefix}`, JSON.stringify(goals));
+};
