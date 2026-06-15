@@ -34,36 +34,44 @@ Transform your financial chaos into clarity with **HisabKitab** - a next-generat
 <tr>
 <td width="50%">
 
-### 🔐 **Smart Authentication**
+### 🔐 **Smart Authentication & Guest Mode**
 
-- JWT-powered secure login
-- Redis session caching
-- Auto token refresh
-- Social login ready
+- **Guest Offline Mode**: Start tracking instantly without logging in! All data is saved securely in local storage.
+- **Cloud Sync Prompt**: Beautiful animated prompt asking guest users to merge local offline records into their server account upon log in.
+- **JWT Protection**: Secure server authentication & user-scoped storage isolation.
 
-### 💸 **Expense Intelligence**
+### 💸 **Expense Intelligence & Budgeting**
 
-- Smart categorization
-- Bulk import/export
-- Duplicate detection
-- Receipt scanning ready
+- **Monthly Budget Tracker**: Real-time progress bar with color-coded alerts (Green for <75%, Amber for 75-100%, Rose for >100%).
+- **Inline Budget Editor**: Edit your monthly limit on-the-fly directly from the dashboard card.
+- **Smart Categorization**: Clean classification of expense records.
+
+### 🤝 **Udhaar (Lend/Borrow) Ledger**
+
+- **Debt Summary**: Real-time stats cards tracking "Total You Lent" vs "Total You Borrowed".
+- **Due Alerts**: Displays status tags (Overdue, Due today, or Upcoming) to manage repayments.
+- **Auto-Ledger Settlement**: One-click settlement that auto-creates compensating transactions in the main expense sheet.
 
 </td>
 <td width="50%">
 
-### 📊 **Real-time Analytics**
+### 📧 **Automated Reports & Exporter**
 
-- Interactive dashboards
-- Spending predictions
-- Budget alerts
-- Custom date ranges
+- **CSV Export**: Instantly download transaction logs filtered by category and date into a spreadsheet.
+- **Premium PDF Statement**: Opens a styled print sheet with logo headers, totals cards, category breakdown pills, and zebra-striped logs.
+- **Email Summaries**: Automated monthly reporting sent directly to your inbox.
 
-### 📧 **Automated Reports**
+### 💳 **Bills & Subscriptions Manager**
 
-- Weekly/Monthly summaries
-- Email notifications
-- PDF exports
-- Trend analysis
+- **Dues Tracker**: Visualizes upcoming billing profiles against current-month expense logs.
+- **Profile Manager**: Configure active subscriptions (Netflix, rent, utility bills) with custom monthly billing dates.
+- **One-Click Pay**: Click "Pay" to auto-log standard subscription payments into the ledger.
+
+### 🐷 **Gullak (Savings Goals Planner)**
+
+- **Gullak Targets**: Set saving goals with a target date. Calculates daily, weekly, and monthly rates needed to save.
+- **Lottie Celebrations**: Features an animated gold/amber Piggy Bank box that plays coin-dropping animations on deposits.
+- **Ledger Integration**: Deposits auto-log as savings entries in your primary expense sheet.
 
 </td>
 </tr>
@@ -290,11 +298,16 @@ npm run start         # Start production server
 
 ## 🔮 **Roadmap**
 
+- [x] 📴 **Offline Guest Mode**: 100% offline LocalStorage fallback with secure user-data isolation
+- [x] 💰 **Advanced Budgeting Tools**: Monthly budget visual tracker (color-coded progress bar & editor)
+- [x] 🤝 **Udhaar Lend/Borrow Tracker**: Outstanding ledger management with automatic compensating entries on settlement
+- [x] 💳 **Recurring Bills & Subscriptions**: Recurring profile management with automated payment entries
+- [x] 🐷 **Gullak Savings Goals**: Visual target rates calculator with custom gold/amber piggy bank animations
+- [x] 📂 **CSV & PDF Statement Exports**: Styled spreadsheet downloads and high-quality printed statement templates
 - [ ] 🤖 AI-powered expense categorization
 - [ ] 📱 Mobile app (React Native)
 - [ ] 💳 Bank account integration
 - [ ] 🌍 Multi-currency support
-- [ ] 📊 Advanced budgeting tools
 - [ ] 🔗 Third-party integrations
 
 ---
