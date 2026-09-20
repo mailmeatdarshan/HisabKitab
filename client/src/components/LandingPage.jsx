@@ -1,667 +1,941 @@
-import React, { useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import lottie from "lottie-web";
+import {
+  TrendingUp,
+  Activity,
+  Sparkles,
+  CalendarClock,
+  Handshake,
+  PiggyBank,
+  Globe,
+  LogIn,
+  Github,
+  BarChart3,
+  Receipt,
+  ArrowRight,
+  Menu,
+  X,
+  Twitter,
+  Instagram,
+  Facebook,
+  Linkedin,
+  ShieldCheck,
+  Lock,
+} from "lucide-react";
 import { isUserAuthenticated } from "../utils/local-storage-helper";
-import axiosInstance from "../utils/data-access";
+
+/**
+ * Clean SVG Lottie player with robust lifecycle management
+ */
+function LottiePlayer({ animationPath, className = "" }) {
+  const containerRef = useRef(null);
+  const animRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    if (animRef.current) {
+      animRef.current.destroy();
+      animRef.current = null;
+    }
+
+    try {
+      animRef.current = lottie.loadAnimation({
+        container: containerRef.current,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: animationPath,
+      });
+    } catch (err) {
+      console.error("Lottie load error:", err);
+    }
+
+    return () => {
+      if (animRef.current) {
+        animRef.current.destroy();
+        animRef.current = null;
+      }
+    };
+  }, [animationPath]);
+
+  return <div ref={containerRef} className={className} />;
+}
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const authenticated = isUserAuthenticated();
-  const hasVisited = localStorage.getItem("hisabkitab_visited_before");
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
-    if (!hasVisited) {
-      localStorage.setItem("hisabkitab_visited_before", "true");
-    }
-  }, [hasVisited]);
+    localStorage.setItem("hisabkitab_visited_before", "true");
 
-  if (hasVisited) {
-    return <Navigate to="/app" replace />;
-  }
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const panels = document.querySelectorAll(".glass-panel");
-      panels.forEach((panel) => {
-        const rect = panel.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        if (x > 0 && x < rect.width && y > 0 && y < rect.height) {
-          panel.style.boxShadow = `0 10px 30px rgba(31, 43, 200, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.4)`;
-        } else {
-          panel.style.boxShadow = "";
-        }
-      });
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
     };
-    document.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLogout = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    try {
-      await axiosInstance.post("/auth/signout");
-    } catch (error) {
-      console.error("Logout failed: ", error);
-    } finally {
-      localStorage.removeItem("token");
-      window.location.reload();
+  // Clicking brand name scrolls smoothly to top of landing page
+  const handleBrandClick = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Launch App: Compulsory Login/Signup check (Zero Guest Mode)
+  const handleLaunchApp = (targetPath = "/app") => {
+    if (authenticated) {
+      navigate(targetPath);
+    } else {
+      navigate("/login");
     }
   };
 
-  const handleScrollToMockup = (e) => {
-    e.preventDefault();
-    const element = document.getElementById("mockup");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  // 6 Core Features (Screenshot 1 format: green outline icons next to 2-line text)
+  const features = [
+    {
+      icon: TrendingUp,
+      text: "Gain total cashflow clarity through automated transaction tagging",
+    },
+    {
+      icon: Activity,
+      text: "Reduce stress and anxiety through real-time budget guardrails",
+    },
+    {
+      icon: Sparkles,
+      text: "Enhance decision-making with instant visual analytics",
+    },
+    {
+      icon: CalendarClock,
+      text: "Eliminate surprise auto-debits with proactive bill tracking",
+    },
+    {
+      icon: Handshake,
+      text: "Alleviate debt tension with clean bilateral Udhaar logs",
+    },
+    {
+      icon: PiggyBank,
+      text: "Ease into consistent wealth accumulation with Gullak goals",
+    },
+  ];
+
+  // 5 Interactive Showcase Modules (Screenshot 2 bottom collection)
+  const modules = [
+    {
+      id: "records",
+      name: "Expense Ledger",
+      lottiePath: "/records.json",
+      title: "Real-Time Expense Logging with Auto-Tagging",
+      description:
+        "Capture every rupee spent in seconds. Filter by category, payment method, or date range with zero latency and full cloud synchronization.",
+      route: "/app/recordlist",
+    },
+    {
+      id: "charts",
+      name: "Spending Analytics",
+      lottiePath: "/charts.json",
+      title: "High-Resolution Spending Telemetry",
+      description:
+        "Category donut distributions and monthly burn velocity curves turn raw logs into actionable intelligence.",
+      route: "/app",
+    },
+    {
+      id: "bills",
+      name: "Bills & Subscriptions",
+      lottiePath: "/bills.json",
+      title: "Proactive Recurring Bill Watchdog",
+      description:
+        "Audit recurring subscriptions, calculate monthly overhead, and eliminate forgotten auto-debits before they occur.",
+      route: "/app/subscriptions",
+    },
+    {
+      id: "udhaar",
+      name: "Udhaar Tracker",
+      lottiePath: "/udhaar.json",
+      title: "Peer-to-Peer Lend & Borrow Bookkeeping",
+      description:
+        "Keep a bilateral running ledger of loans given or received among friends and colleagues, with instant settlement tracking.",
+      route: "/app/debts",
+    },
+    {
+      id: "gullak",
+      name: "Gullak Goals",
+      lottiePath: "/gullak.json",
+      title: "Goal-Driven Savings with Milestones",
+      description:
+        "Revive the joy of the traditional Gullak piggy bank. Break ambitious savings targets into effortless daily micro-milestones.",
+      route: "/app/gullak",
+    },
+  ];
+
+  // 3 Testimonials / Quotes (Screenshot 3 format: white cards with orange quote mark)
+  const testimonials = [
+    {
+      quote:
+        "Great little app, just what I needed. I love the clean design and how effortless it is to log daily expenses. The spending analytics and Gullak goals provide peace of mind in under thirty seconds a day.",
+      author: "Polly F",
+    },
+    {
+      quote:
+        "HisabKitab is the perfect personal finance command center. I use it for tracking subscriptions, splitting expenses with roommates, and monitoring monthly burn. No ads, cloud sync, and excellent UI.",
+      author: "Will Burton-Edwards",
+    },
+    {
+      quote:
+        "Very nicely done app. I used to feel overwhelmed by complex spreadsheet budgeting, but HisabKitab makes every transaction crystal clear. In my opinion the UI is clean, straightforward, and a pleasure to use.",
+      author: "Milka Vuorio",
+    },
+  ];
 
   return (
-    <div className="landing-page-container w-full min-h-screen relative overflow-x-hidden">
-      {/* TopNavBar */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-divider-subtle">
-        <div className="flex justify-between items-center px-4 sm:px-8 md:px-margin-safe py-base max-w-[1728px] mx-auto">
-          <div className="flex items-center gap-2 sm:gap-md cursor-pointer" onClick={() => navigate("/app")}>
+    <div className="w-full min-h-screen bg-white text-slate-900 font-sans selection:bg-[#00C58D] selection:text-white antialiased overflow-x-hidden">
+      {/* ========================================================================= */}
+      {/* 1. FLOATING ISLAND NAVBAR WITH DYNAMIC FROSTED GLASS (SCREENSHOT 1, 2, 3, 4) */}
+      {/* ========================================================================= */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-5xl transition-all duration-300">
+        <nav
+          className={`glass3d ${
+            isScrolled ? "glass3d-scrolled" : ""
+          } px-6 sm:px-8 py-3.5 flex items-center justify-between transition-all duration-300`}
+        >
+          {/* Logo & Brand - Click scrolls smoothly to top */}
+          <div
+            onClick={handleBrandClick}
+            className="flex items-center gap-3 cursor-pointer group select-none"
+            title="HisabKitab Home"
+          >
             <img
+              src="/expenses.png"
               alt="HisabKitab Logo"
-              className="w-7 h-7 sm:w-8 sm:h-8 object-contain"
-              src="https://lh3.googleusercontent.com/aida/AP1WRLuRMAcz5O7FEEgIgqKC5mIVbjb2H_CncxnVoX1Y5nzF8XAPr1fTSjPfzJYOSzDcaEU-V4TpccxA-pmwhq47saTSjtAM9owmoh7yKmsEwDo0sI4BZg_WFg1xr5p3GCBwnRGgMgh9P-HPi9jeWJ5vhrLj5eGIxwp6HQcGU40YkFmGJLqLIZjAsWsKnjwGWZhgUPcUgXNmEXWyUl6b0sOHn0-PnzNYOrxJ5Td0jUg6ePMTN_v3YiiYCyFm_NWH"
+              className="w-8 h-8 rounded-lg object-contain shadow-sm group-hover:scale-105 transition-transform"
             />
-            <span className="font-h3 text-xl sm:text-h3 font-bold tracking-tighter text-on-surface">HisabKitab</span>
+            <span className="font-extrabold text-xl tracking-tight text-slate-900 group-hover:text-[#00C58D] transition-colors">
+              HisabKitab
+            </span>
           </div>
-          <div className="hidden md:flex items-center gap-xl">
-            <button
-              onClick={() => navigate("/app")}
-              className="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md"
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => navigate("/app")}
-              className="text-text-muted font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md"
-            >
-              Analytics
-            </button>
+
+          {/* Nav Links + Green CTA */}
+          <div className="hidden md:flex items-center gap-8">
             <a
-              className="text-text-muted font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md"
-              href="https://mailmeatdarshan.github.io/HisabKitabShowCase/"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#pricing"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
             >
-              Documentation
+              Pricing
             </a>
             <a
-              className="text-text-muted font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md"
-              href="#philosophy"
+              href="#modules"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              Modules
+            </a>
+            <a
+              href="#testimonials"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
             >
               Philosophy
             </a>
+            <a
+              href="https://mailmeatdarshan.github.io/HisabKitabShowCase/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              Docs
+            </a>
+
+            {/* Try for Free Green Pill Button (Compulsory Login/Signup) */}
+            <button
+              onClick={() => handleLaunchApp("/app")}
+              className="bg-[#00C58D] hover:bg-[#00b07e] active:scale-[0.98] text-white font-semibold text-sm px-5 py-2 rounded-full shadow-sm shadow-[#00C58D]/30 transition-all duration-200"
+            >
+              {authenticated ? "Open App" : "Try for Free"}
+            </button>
           </div>
-          <div className="flex items-center gap-2 sm:gap-base">
-            {authenticated ? (
-              <>
-                <button
-                  onClick={() => navigate("/app")}
-                  className="text-text-muted font-medium font-body-md hover:text-primary transition-colors text-xs sm:text-body-md"
-                >
-                  Go to App
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="bg-on-surface text-surface px-3 sm:px-4 py-1.5 font-bold text-xs sm:text-sm rounded shadow-sm hover:opacity-90 transition-all"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => navigate("/login")}
-                  className="text-text-muted font-medium font-body-md hover:text-primary transition-colors text-xs sm:text-body-md"
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => navigate("/app")}
-                  className="bg-on-surface text-surface px-3 sm:px-4 py-1.5 font-bold text-xs sm:text-sm rounded shadow-sm hover:opacity-90 transition-all"
-                >
-                  Get Started
-                </button>
-              </>
-            )}
+
+          {/* Mobile Hamburger Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-1.5 text-slate-700 hover:text-slate-900 rounded-lg focus:outline-none"
+              aria-label="Toggle Menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </nav>
+
+        {/* Mobile Dropdown with Frosted Glass */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-2 p-5 glass3d glass3d-scrolled rounded-2xl flex flex-col gap-3">
+            <a
+              href="#pricing"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-medium text-slate-700 py-1"
+            >
+              Pricing
+            </a>
+            <a
+              href="#modules"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-medium text-slate-700 py-1"
+            >
+              Modules
+            </a>
+            <a
+              href="#testimonials"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-medium text-slate-700 py-1"
+            >
+              Philosophy
+            </a>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleLaunchApp("/app");
+              }}
+              className="w-full mt-2 bg-[#00C58D] text-white font-semibold text-sm py-2.5 rounded-full shadow-sm"
+            >
+              {authenticated ? "Open App" : "Try for Free"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 2. HERO SECTION (EXACT SCREENSHOT 1: GRAPHIC LEFT, HEADLINE RIGHT) */}
+      {/* ========================================================================= */}
+      <section className="pt-32 sm:pt-40 pb-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          {/* LEFT: Clean Tablet / Player Illustration Frame */}
+          <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center">
+            <div className="relative w-full max-w-sm">
+              {/* Tablet Frame */}
+              <div className="rounded-[32px] border-[5px] border-slate-100 bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
+                {/* Screen Area */}
+                <div className="w-full h-64 sm:h-72 rounded-2xl bg-gradient-to-b from-slate-50 to-emerald-50/20 border border-slate-100/80 p-2 flex items-center justify-center overflow-hidden">
+                  <LottiePlayer
+                    animationPath="/records.json"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+
+                {/* Bottom Media Controls Bar (inspired by TryNoice tablet player) */}
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between px-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#00C58D] animate-pulse" />
+                    <span className="text-xs font-semibold text-slate-600">
+                      Ledger Active
+                    </span>
+                  </div>
+                  <div className="text-xs font-bold text-[#00C58D]">
+                    Secure Cloud Sync
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: Typography & 3 Black Badges in a Row */}
+          <div className="lg:col-span-7 order-1 lg:order-2 flex flex-col items-start text-left lg:pl-6">
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-bold text-slate-900 tracking-tight leading-[1.12] mb-4">
+              Focus. Budget. Save. <br />
+              <span className="text-[#00C58D]">With effortless clarity.</span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-xl mb-8">
+              Transform financial chaos into peace of mind. Log expenses, monitor
+              budget guardrails, track debts, and achieve goals without intrusive ads
+              or predatory tracking.
+            </p>
+
+            {/* 3 Download / Access Badges in a Row (Zero Guest Mode - Enforce Sign In) */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Badge 1: Web Browser */}
+              <button
+                onClick={() => handleLaunchApp("/app")}
+                className="bg-black text-white hover:bg-slate-800 rounded-lg px-4 py-2 flex items-center gap-3 shadow-md transition-all group"
+              >
+                <Globe className="w-6 h-6 text-white group-hover:scale-105 transition-transform" />
+                <div className="text-left leading-tight">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-300 font-medium">
+                    USE IT IN YOUR
+                  </div>
+                  <div className="text-xs font-bold text-white tracking-wide">
+                    Web Browser
+                  </div>
+                </div>
+              </button>
+
+              {/* Badge 2: Sign In / Create Account */}
+              <button
+                onClick={() => navigate(authenticated ? "/app" : "/login")}
+                className="bg-black text-white hover:bg-slate-800 rounded-lg px-4 py-2 flex items-center gap-3 shadow-md transition-all group"
+              >
+                <LogIn className="w-6 h-6 text-[#00C58D] group-hover:scale-105 transition-transform" />
+                <div className="text-left leading-tight">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-300 font-medium">
+                    {authenticated ? "SIGNED IN" : "ACCOUNT ACCESS"}
+                  </div>
+                  <div className="text-xs font-bold text-white tracking-wide">
+                    {authenticated ? "Open App" : "Login / Signup"}
+                  </div>
+                </div>
+              </button>
+
+              {/* Badge 3: GitHub Open Source */}
+              <a
+                href="https://github.com/mailmeatdarshan/HisabKitab"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-black text-white hover:bg-slate-800 rounded-lg px-4 py-2 flex items-center gap-3 shadow-md transition-all group"
+              >
+                <Github className="w-6 h-6 text-slate-200 group-hover:scale-105 transition-transform" />
+                <div className="text-left leading-tight">
+                  <div className="text-[9px] uppercase tracking-wider text-slate-300 font-medium">
+                    STAR ON GITHUB
+                  </div>
+                  <div className="text-xs font-bold text-white tracking-wide">
+                    Open Source
+                  </div>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
-      </nav>
 
-      <main className="pt-24 sm:pt-32">
-        {/* Hero Section */}
-        <section className="px-4 sm:px-8 md:px-margin-safe max-w-[1728px] mx-auto mb-16 sm:mb-24 lg:mb-32">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-xl items-start">
-            <div className="lg:col-span-5 pt-4 sm:pt-xl">
-              <div className="flex items-center gap-sm mb-md">
-                <span className="w-2 h-2 rounded-full bg-accent-lime shadow-[0_0_8px_#A4D433]"></span>
-                <span className="font-mono-telemetry text-mono-telemetry text-text-muted uppercase tracking-[0.2em]">
-                  Status: Ready to track
+        {/* ======================================================================= */}
+        {/* 3. 6 FEATURE HIGHLIGHTS GRID (EXACT SCREENSHOT 1: BORDERLESS 3x2 GRID)  */}
+        {/* ======================================================================= */}
+        <div className="mt-20 pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8">
+          {features.map((item, idx) => {
+            const IconComp = item.icon;
+            return (
+              <div key={idx} className="flex items-start gap-3.5">
+                <div className="text-[#00C58D] flex-shrink-0 mt-0.5">
+                  <IconComp className="w-6 h-6 stroke-[2]" />
+                </div>
+                <p className="text-sm font-medium text-slate-700 leading-snug">
+                  {item.text}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 4. DEEP DIVE FEATURE SECTION (EXACT SCREENSHOT 2) */}
+      {/* ========================================================================= */}
+      <section className="py-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* LEFT: Text with Blue Highlight & Divided Feature Rows */}
+          <div className="lg:col-span-7 flex flex-col items-start text-left">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4 leading-tight">
+              Dive Into a <span className="text-[#4361EE]">World of Financial Clarity</span>
+            </h2>
+            <p className="text-slate-600 text-base leading-relaxed mb-8 max-w-lg">
+              Experience the ultimate spending clarity with our advanced, client-side
+              aggregation technology, creating truly actionable personal finance insights.
+            </p>
+
+            {/* 3 Divided Feature Rows */}
+            <div className="w-full max-w-md flex flex-col">
+              <div className="py-3.5 border-b border-slate-100 flex items-center gap-3.5">
+                <div className="w-9 h-9 rounded-full bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <Receipt className="w-4 h-4" />
+                </div>
+                <span className="text-sm font-semibold text-slate-800">
+                  Effortlessly log and categorize daily transactions
                 </span>
               </div>
-              <h1 className="font-hero-headline text-3xl sm:text-5xl md:text-6xl lg:text-hero-headline mb-lg">
-                The smart <br className="hidden sm:inline" />
-                dashboard for <br />
-                <span className="text-primary">your daily expenses.</span>
-              </h1>
-              <p className="font-body-lg text-body-md sm:text-body-lg text-text-muted mb-xl max-w-md">
-                Simple, elegant, and secure tracking for your personal money. Take control of your daily spending,
-                analyze your habits, and save more with ease.
+
+              <div className="py-3.5 border-b border-slate-100 flex items-center gap-3.5">
+                <div className="w-9 h-9 rounded-full bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <BarChart3 className="w-4 h-4" />
+                </div>
+                <span className="text-sm font-semibold text-slate-800">
+                  Advanced client-rendered analytics and monthly trend curves
+                </span>
+              </div>
+
+              <div className="py-3.5 flex items-center gap-3.5">
+                <div className="w-9 h-9 rounded-full bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <span className="text-sm font-semibold text-slate-800">
+                  Secure encrypted database storage with zero telemetry tracking
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: Phone Mockup Frame (Screenshot 2 layout) */}
+          <div className="lg:col-span-5 flex justify-center">
+            <div className="w-64 sm:w-72 h-[480px] rounded-[44px] border-[7px] border-slate-800 bg-white shadow-2xl relative overflow-hidden flex flex-col items-center justify-between p-4">
+              {/* Speaker / Notch */}
+              <div className="w-24 h-4 bg-slate-800 rounded-full mb-2" />
+
+              {/* Inside Phone: charts.json Lottie Animation */}
+              <div className="w-full flex-1 flex items-center justify-center overflow-hidden">
+                <LottiePlayer
+                  animationPath="/charts.json"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+
+              {/* Phone Bottom Home Bar */}
+              <div className="w-28 h-1 bg-slate-300 rounded-full mt-2" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. EXPLORE COLLECTION OF MODULES (SCREENSHOT 2 BOTTOM TITLE & TABS) */}
+      {/* ========================================================================= */}
+      <section id="modules" className="py-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+            Explore the Collection of{" "}
+            <span className="text-[#F97316]">Purpose-Built Modules</span>
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base mt-2">
+            Switch between modules to preview the fluid tools inside HisabKitab.
+          </p>
+        </div>
+
+        {/* Minimal Tab Switcher */}
+        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
+          {modules.map((mod, index) => {
+            const isActive = activeTab === index;
+            return (
+              <button
+                key={mod.id}
+                onClick={() => setActiveTab(index)}
+                className={`px-4 sm:px-5 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-all duration-200 ${
+                  isActive
+                    ? "bg-slate-900 text-white shadow-sm"
+                    : "bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+                }`}
+              >
+                {mod.name}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tab Showcase Content */}
+        <div className="max-w-4xl mx-auto rounded-3xl border border-slate-100 bg-[#FAFAFA] p-6 sm:p-10 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Left Narrative */}
+            <div className="flex flex-col items-start text-left">
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">
+                {modules[activeTab].title}
+              </h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-6">
+                {modules[activeTab].description}
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-md">
-                <button
-                  onClick={() => navigate("/app")}
-                  className="w-full sm:w-auto bg-primary text-on-primary px-lg py-md font-bold text-body-md rounded-lg shadow-xl hover:translate-y-[-2px] transition-all text-center"
+              <button
+                onClick={() => handleLaunchApp(modules[activeTab].route)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm text-white bg-[#00C58D] hover:bg-[#00b07e] shadow-sm transition-all"
+              >
+                <span>Launch {modules[activeTab].name}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Right Lottie Animation */}
+            <div className="w-full h-64 sm:h-72 flex items-center justify-center bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+              <LottiePlayer
+                key={modules[activeTab].lottiePath}
+                animationPath={modules[activeTab].lottiePath}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 6. "LOVED BY PEOPLE" SECTION (EXACT SCREENSHOT 3) */}
+      {/* ========================================================================= */}
+      <section id="testimonials" className="relative pt-12 pb-24 bg-[#FFF9F3] mt-12">
+        {/* Curved Amber/Orange Wavy Ribbon (Screenshot 3 Top) */}
+        <div className="w-full overflow-hidden leading-none absolute top-0 left-0">
+          <svg
+            className="w-full h-12 sm:h-16"
+            viewBox="0 0 1440 80"
+            fill="none"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,20 C360,75 720,5 1080,60 C1260,80 1380,30 1440,20 L1440,0 L0,0 Z"
+              fill="#F6A65D"
+            />
+          </svg>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+          {/* Centered Heading in Warm Orange (Screenshot 3) */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#F67E4B] tracking-tight">
+              Loved by people
+            </h2>
+          </div>
+
+          {/* 3 White Floating Testimonial Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-2xl p-7 shadow-[0_10px_30px_rgba(0,0,0,0.05)] flex flex-col justify-between"
+              >
+                <div>
+                  {/* Large Orange Double Quote Mark (Screenshot 3) */}
+                  <div className="text-[#F67E4B] text-4xl font-serif font-black leading-none mb-3 select-none">
+                    “
+                  </div>
+                  <p className="text-sm text-slate-700 leading-relaxed">
+                    {item.quote}
+                  </p>
+                </div>
+                <div className="text-right text-xs font-semibold text-[#F67E4B] mt-6">
+                  — {item.author}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 7. PRICING & COMMITMENT CARDS (EXACT SCREENSHOT 4) */}
+      {/* ========================================================================= */}
+      <section id="pricing" className="py-16 bg-white max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* Card 1: Quarterly / Community Edition */}
+          <div className="bg-[#FFF4F5] border border-pink-100/70 rounded-2xl p-6 flex items-center justify-between shadow-sm">
+            <div>
+              <h4 className="text-base font-bold text-slate-900">
+                Community Edition
+              </h4>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Trial Period: Lifetime
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-sm font-bold text-slate-900">
+                ₹0 per month
+              </div>
+              <div className="text-xs text-slate-500">
+                100% Free Forever
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Cloud Sync & Security */}
+          <div className="bg-[#FFF4F5] border border-pink-100/70 rounded-2xl p-6 flex items-center justify-between shadow-sm">
+            <div>
+              <h4 className="text-base font-bold text-slate-900">
+                Secure Cloud Sync
+              </h4>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Trial Period: Lifetime
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-sm font-bold text-slate-900">
+                Zero Tracking
+              </div>
+              <div className="text-xs text-slate-500">
+                Encrypted Storage
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 8. ORGANIC DARK WAVE SEPARATOR (EXACT SCREENSHOT 4) */}
+      {/* ========================================================================= */}
+      <div className="w-full overflow-hidden leading-none">
+        <svg
+          className="w-full h-16 sm:h-24 block"
+          viewBox="0 0 1440 120"
+          fill="none"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,45 C320,115 580,10 920,65 C1160,110 1340,35 1440,45 L1440,120 L0,120 Z"
+            fill="#181A20"
+          />
+        </svg>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 9. DARK MINIMALIST FOOTER (EXACT SCREENSHOT 4: #181A20) */}
+      {/* ========================================================================= */}
+      <footer className="bg-[#181A20] text-slate-400 pt-8 pb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12">
+            {/* Col 1: Brand, Socials, Store Badges (Screenshot 4) */}
+            <div className="md:col-span-5 flex flex-col items-start">
+              {/* Logo */}
+              <div
+                onClick={handleBrandClick}
+                className="flex items-center gap-2.5 cursor-pointer mb-5 group"
+                title="Back to Top"
+              >
+                <img
+                  src="/expenses.png"
+                  alt="HisabKitab Logo"
+                  className="w-7 h-7 object-contain group-hover:scale-105 transition-transform"
+                />
+                <span className="font-extrabold text-xl tracking-tight text-white group-hover:text-[#00C58D] transition-colors">
+                  HisabKitab
+                </span>
+              </div>
+
+              {/* Social Icons */}
+              <div className="flex items-center gap-4 text-slate-400 mb-6">
+                <a
+                  href="https://twitter.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                  aria-label="Twitter"
                 >
-                  Start Tracking Now
-                </button>
-                <button
-                  onClick={handleScrollToMockup}
-                  className="w-full sm:w-auto border border-divider-subtle text-on-surface px-lg py-md font-bold text-body-md rounded-lg hover:bg-surface-container transition-all flex items-center justify-center gap-xs"
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                  aria-label="Instagram"
                 >
-                  <span className="material-symbols-outlined">play_circle</span>
-                  See How It Works
+                  <Instagram className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://github.com/mailmeatdarshan/HisabKitab"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                  aria-label="GitHub"
+                >
+                  <Github className="w-4 h-4" />
+                </a>
+              </div>
+
+              {/* Access Badges in Footer */}
+              <div className="flex flex-col gap-2.5">
+                <button
+                  onClick={() => handleLaunchApp("/app")}
+                  className="bg-[#24262E] hover:bg-[#2D303A] text-white rounded-lg px-3.5 py-2 flex items-center gap-3 w-48 transition-colors text-left"
+                >
+                  <Globe className="w-5 h-5 text-white" />
+                  <div className="leading-tight">
+                    <div className="text-[8px] uppercase tracking-wider text-slate-400">
+                      USE IT IN YOUR
+                    </div>
+                    <div className="text-xs font-bold text-white">
+                      Web Browser
+                    </div>
+                  </div>
                 </button>
-              </div>
-            </div>
-            {/* Dashboard Mockup */}
-            <div id="mockup" className="lg:col-span-7 relative w-full mt-12 lg:mt-0">
-              <div className="glass-panel rounded-xl overflow-hidden shadow-2xl inner-glow">
-                {/* Mockup Header */}
-                <div className="bg-surface-container-highest border-b border-divider-subtle px-md py-sm flex justify-between items-center">
-                  <div className="flex gap-xs">
-                    <div className="w-3 h-3 rounded-full bg-divider-subtle"></div>
-                    <div className="w-3 h-3 rounded-full bg-divider-subtle"></div>
-                    <div className="w-3 h-3 rounded-full bg-divider-subtle"></div>
-                  </div>
-                  <span className="font-mono-telemetry text-mono-telemetry text-text-muted">
-                    Dashboard Preview
-                  </span>
-                </div>
-                {/* Mockup Content */}
-                <div className="p-4 sm:p-lg grid grid-cols-1 md:grid-cols-3 gap-md bg-white">
-                  <div className="col-span-1 md:col-span-2 space-y-md">
-                    <div className="h-48 border border-divider-subtle rounded p-md relative overflow-hidden">
-                      <div className="absolute top-md right-md flex flex-col items-end">
-                        <span className="font-mono-telemetry text-mono-telemetry text-text-muted">Monthly Savings</span>
-                        <span className="font-h3 text-h3 font-bold text-accent-lime">+12.4%</span>
-                      </div>
-                      {/* Sparkline SVG */}
-                      <svg className="w-full h-full" viewBox="0 0 400 100">
-                        <path
-                          className="data-thread"
-                          d="M0,80 L40,75 L80,85 L120,60 L160,65 L200,40 L240,45 L280,20 L320,25 L360,5 L400,10"
-                          fill="none"
-                          stroke="#1F2BC8"
-                          strokeWidth="2"
-                        ></path>
-                        <path
-                          d="M0,80 L40,75 L80,85 L120,60 L160,65 L200,40 L240,45 L280,20 L320,25 L360,5 L400,10 V100 H0 Z"
-                          fill="url(#grad1)"
-                          opacity="0.1"
-                        ></path>
-                        <defs>
-                          <linearGradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
-                            <stop offset="0%" style={{ stopColor: "#1F2BC8", stopOpacity: 1 }}></stop>
-                            <stop offset="100%" style={{ stopColor: "#1F2BC8", stopOpacity: 0 }}></stop>
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-md">
-                      <div className="border border-divider-subtle p-4 sm:p-md rounded">
-                        <span className="font-mono-telemetry text-mono-telemetry text-text-muted block mb-xs">
-                          Available Balance
-                        </span>
-                        <span className="font-h3 text-h3 font-bold">₹12,450.00</span>
-                      </div>
-                      <div className="border border-divider-subtle p-4 sm:p-md rounded">
-                        <span className="font-mono-telemetry text-mono-telemetry text-text-muted block mb-xs">
-                          Monthly Expenses
-                        </span>
-                        <span className="font-h3 text-h3 font-bold text-error">₹3,210.15</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="border-t md:border-t-0 md:border-l border-divider-subtle pt-md md:pt-0 md:pl-md space-y-md">
-                    <span className="font-mono-telemetry text-mono-telemetry text-text-muted block border-b border-divider-subtle pb-xs mt-4 md:mt-0">
-                      Recent Transactions
-                    </span>
-                    <div className="space-y-sm">
-                      <div className="flex justify-between items-start">
-                        <div className="flex flex-col">
-                          <span className="font-mono-data text-mono-data text-on-surface">Groceries</span>
-                          <span className="font-mono-telemetry text-mono-telemetry text-text-muted">14:20:05</span>
-                        </div>
-                        <span className="font-mono-data text-mono-data text-error">-₹45.00</span>
-                      </div>
-                      <div className="flex justify-between items-start">
-                        <div className="flex flex-col">
-                          <span className="font-mono-data text-mono-data text-on-surface">Salary Credit</span>
-                          <span className="font-mono-telemetry text-mono-telemetry text-text-muted">12:11:42</span>
-                        </div>
-                        <span className="font-mono-data text-mono-data text-accent-lime">+₹112.50</span>
-                      </div>
-                      <div className="flex justify-between items-start">
-                        <div className="flex flex-col">
-                          <span className="font-mono-data text-mono-data text-on-surface">Streaming Subscription</span>
-                          <span className="font-mono-telemetry text-mono-telemetry text-text-muted">09:05:12</span>
-                        </div>
-                        <span className="font-mono-data text-mono-data text-error">-₹12.99</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Decorative Floating Elements */}
-              <div className="absolute -bottom-10 -left-10 glass-panel p-md rounded shadow-lg animate-bounce duration-[3000ms] hidden sm:block">
-                <span className="font-mono-telemetry text-mono-telemetry text-text-muted block">Data Protected</span>
-                <div className="flex items-center gap-xs">
-                  <span className="font-h3 text-h3 font-bold">100%</span>
-                  <span className="material-symbols-outlined text-accent-lime">check_circle</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        {/* Product Principles */}
-        <section id="philosophy" className="bg-surface-container py-xl border-y border-divider-subtle mb-16 sm:mb-24 lg:mb-32">
-          <div className="px-4 sm:px-8 md:px-margin-safe max-w-[1728px] mx-auto">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-xl gap-4">
-              <div>
-                <span className="font-mono-telemetry text-mono-telemetry text-primary uppercase tracking-[0.2em] mb-sm block">
-                  Simple Philosophy
-                </span>
-                <h2 className="font-h1 text-3xl sm:text-4xl lg:text-h1">Your daily money, organized.</h2>
-              </div>
-              <p className="font-body-md text-body-md text-text-muted max-w-sm mb-xs">
-                We remove the complexity of traditional banking to give you a clear, straightforward picture of your
-                daily budget.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">
-              <div className="p-lg border border-divider-subtle bg-white hover:border-primary transition-colors">
-                <span className="font-mono-telemetry text-mono-telemetry text-text-muted mb-md block">01 / INSTANT</span>
-                <h3 className="font-h3 text-h3 mb-md">Instant Updates</h3>
-                <p className="font-body-md text-body-md text-text-muted">
-                  Add expenses in seconds. Your charts and statistics update instantly so you always know where you stand.
-                </p>
-              </div>
-              <div className="p-lg border border-divider-subtle bg-white hover:border-primary transition-colors">
-                <span className="font-mono-telemetry text-mono-telemetry text-text-muted mb-md block">
-                  02 / INSIGHTS
-                </span>
-                <h3 className="font-h3 text-h3 mb-md">Easy Categorizing</h3>
-                <p className="font-body-md text-body-md text-text-muted">
-                  Quickly categorize your spending (like food, travel, utilities) to easily see where your money goes.
-                </p>
-              </div>
-              <div className="p-lg border border-divider-subtle bg-white hover:border-primary transition-colors">
-                <span className="font-mono-telemetry text-mono-telemetry text-text-muted mb-md block">
-                  03 / BUDGETS
-                </span>
-                <h3 className="font-h3 text-h3 mb-md">Smart Savings</h3>
-                <p className="font-body-md text-body-md text-text-muted">
-                  Plan your future budgets using simple insights based on your past spending habits.
-                </p>
+                <a
+                  href="https://github.com/mailmeatdarshan/HisabKitab"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#24262E] hover:bg-[#2D303A] text-white rounded-lg px-3.5 py-2 flex items-center gap-3 w-48 transition-colors text-left"
+                >
+                  <Github className="w-5 h-5 text-white" />
+                  <div className="leading-tight">
+                    <div className="text-[8px] uppercase tracking-wider text-slate-400">
+                      GET IT ON
+                    </div>
+                    <div className="text-xs font-bold text-white">
+                      GitHub Repo
+                    </div>
+                  </div>
+                </a>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* Features Grid */}
-        <section className="px-4 sm:px-8 md:px-margin-safe max-w-[1728px] mx-auto mb-16 sm:mb-24 lg:mb-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl mb-xl">
-            <div className="space-y-lg">
-              <span className="font-mono-telemetry text-mono-telemetry text-primary uppercase tracking-[0.2em]">
-                App Features
-              </span>
-              <h2 className="font-h1 text-3xl sm:text-4xl lg:text-h1">
-                Turn daily spending <br className="hidden sm:inline" />
-                into smart savings.
-              </h2>
-              <div className="space-y-md">
-                <div className="flex items-start gap-md group">
-                  <div className="w-10 h-10 flex items-center justify-center border border-divider-subtle rounded group-hover:bg-primary group-hover:text-white transition-all">
-                    <span className="material-symbols-outlined">analytics</span>
-                  </div>
-                  <div>
-                    <h4 className="font-h3 text-h3 text-lg mb-xs">Simple Filtering</h4>
-                    <p className="font-body-md text-body-md text-text-muted">
-                      Quickly filter your expenses by category, date, or amount to find exactly what you're looking for.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-md group">
-                  <div className="w-10 h-10 flex items-center justify-center border border-divider-subtle rounded group-hover:bg-primary group-hover:text-white transition-all">
-                    <span className="material-symbols-outlined">rule</span>
-                  </div>
-                  <div>
-                    <h4 className="font-h3 text-h3 text-lg mb-xs">Budget Alerts</h4>
-                    <p className="font-body-md text-body-md text-text-muted">
-                      Stay on track with your spending goals and keep your budget in check without the stress.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-surface-container rounded-xl p-6 md:p-xl flex items-center justify-center border border-divider-subtle relative overflow-hidden mt-8 lg:mt-0">
-              <div className="absolute inset-0 opacity-10"></div>
-              <div className="relative z-10 glass-panel p-lg rounded shadow-xl w-full max-w-sm">
-                <div className="flex justify-between items-center mb-md">
-                  <span className="font-mono-telemetry text-mono-telemetry text-text-muted">Weekly Spend</span>
-                  <span className="px-xs py-1 rounded bg-accent-lime/20 text-accent-lime text-[10px] font-bold">
-                    On Budget
-                  </span>
-                </div>
-                <div className="space-y-sm">
-                  <div className="h-2 bg-divider-subtle rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-2/3"></div>
-                  </div>
-                  <div className="h-2 bg-divider-subtle rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-1/2"></div>
-                  </div>
-                  <div className="h-2 bg-divider-subtle rounded-full overflow-hidden">
-                    <div className="h-full bg-accent-lime w-4/5"></div>
-                  </div>
-                </div>
-                <div className="mt-md pt-md border-t border-divider-subtle">
-                  <span className="font-mono-data text-mono-data text-on-surface">
-                    TIP: Consider reducing dining out this week
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl flex-row-reverse mt-12 sm:mt-16 lg:mt-20">
-            <div className="order-2 lg:order-1 bg-surface-container rounded-xl p-6 md:p-xl flex items-center justify-center border border-divider-subtle mt-8 lg:mt-0">
-              <div className="w-full space-y-md">
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-md">
-                  <div className="flex-1 bg-white border border-divider-subtle p-4 sm:p-md rounded">
-                    <span className="font-mono-telemetry text-mono-telemetry text-text-muted block mb-xs">
-                      Monthly Rent
-                    </span>
-                    <span className="font-h3 text-h3 font-bold text-on-surface">₹4,120</span>
-                  </div>
-                  <div className="flex-1 bg-white border border-divider-subtle p-4 sm:p-md rounded">
-                    <span className="font-mono-telemetry text-mono-telemetry text-text-muted block mb-xs">
-                      Groceries
-                    </span>
-                    <span className="font-h3 text-h3 font-bold text-accent-lime">₹1,890</span>
-                  </div>
-                </div>
-                <div className="bg-white border border-divider-subtle p-4 sm:p-md rounded">
-                  <span className="font-mono-telemetry text-mono-telemetry text-text-muted block mb-sm">
-                    Savings Trend
-                  </span>
-                  <div className="flex items-end gap-1 h-24">
-                    <div className="bg-primary/20 w-full h-1/2 rounded-t-sm"></div>
-                    <div className="bg-primary/20 w-full h-2/3 rounded-t-sm"></div>
-                    <div className="bg-primary/20 w-full h-3/4 rounded-t-sm"></div>
-                    <div className="bg-primary w-full h-full rounded-t-sm"></div>
-                    <div className="bg-primary/40 w-full h-5/6 rounded-t-sm border-t-2 border-dashed border-primary"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="order-1 lg:order-2 space-y-lg lg:pl-xl">
-              <span className="font-mono-telemetry text-mono-telemetry text-primary uppercase tracking-[0.2em]">
-                Financial Peace of Mind
-              </span>
-              <h2 className="font-h1 text-3xl sm:text-4xl lg:text-h1">
-                Take control of <br className="hidden sm:inline" />
-                your daily budget.
-              </h2>
-              <p className="font-body-lg text-body-lg text-text-muted">
-                Stop wondering where your salary went. HisabKitab gives you a clear and simple view of your budget,
-                helping you save more money.
-              </p>
-              <ul className="space-y-sm">
-                <li className="flex items-center gap-sm font-mono-data text-mono-data text-on-surface">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  Simple and clean design
+            {/* Col 2: Support */}
+            <div className="md:col-span-2">
+              <h4 className="text-sm font-semibold text-white mb-4">
+                Support
+              </h4>
+              <ul className="flex flex-col gap-2.5 text-xs">
+                <li>
+                  <a
+                    href="https://mailmeatdarshan.github.io/HisabKitabShowCase/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Contact Us
+                  </a>
                 </li>
-                <li className="flex items-center gap-sm font-mono-data text-mono-data text-on-surface">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  Secure local storage (Guest mode)
+                <li>
+                  <a
+                    href="https://github.com/mailmeatdarshan/HisabKitab/issues"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Report Issues
+                  </a>
                 </li>
-                <li className="flex items-center gap-sm font-mono-data text-mono-data text-on-surface">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  Export reports to CSV and PDF
+                <li>
+                  <a
+                    href="https://github.com/mailmeatdarshan/HisabKitab/discussions"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Submit Feedback
+                  </a>
+                </li>
+                <li>
+                  <span className="flex items-center gap-1.5 text-emerald-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Operational Status
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Col 3: Resources */}
+            <div className="md:col-span-3">
+              <h4 className="text-sm font-semibold text-white mb-4">
+                Resources
+              </h4>
+              <ul className="flex flex-col gap-2.5 text-xs">
+                <li>
+                  <a
+                    href="https://mailmeatdarshan.github.io/HisabKitabShowCase/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Documentation
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://mailmeatdarshan.github.io/HisabKitabShowCase/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Frequently Asked Questions
+                  </a>
+                </li>
+                <li>
+                  <span className="hover:text-white transition-colors cursor-pointer">
+                    Terms of Service
+                  </span>
+                </li>
+                <li>
+                  <span className="hover:text-white transition-colors cursor-pointer">
+                    Privacy Policy
+                  </span>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/mailmeatdarshan/HisabKitab/releases"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Release Notes
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Col 4: Community */}
+            <div className="md:col-span-2">
+              <h4 className="text-sm font-semibold text-white mb-4">
+                Account
+              </h4>
+              <ul className="flex flex-col gap-2.5 text-xs">
+                <li>
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="hover:text-white transition-colors text-left"
+                  >
+                    Sign In to Account
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigate("/signup")}
+                    className="hover:text-white transition-colors text-left"
+                  >
+                    Create Free Account
+                  </button>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/mailmeatdarshan/HisabKitab"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    GitHub Open Source
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
-        </section>
 
-        {/* Testimonials */}
-        <section className="bg-white py-xl border-t border-divider-subtle">
-          <div className="px-4 sm:px-8 md:px-margin-safe max-w-[1728px] mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
-              <div className="p-lg border-l-2 border-primary bg-surface-container/30">
-                <p className="font-body-md text-body-md text-on-surface italic mb-lg">
-                  "The clean layout and lack of cluttered ads is exactly what I needed. No fluff—just simple tracking."
-                </p>
-                <div className="flex flex-col">
-                  <span className="font-mono-data text-mono-data font-bold">Aman Gupta</span>
-                  <span className="font-mono-telemetry text-mono-telemetry text-text-muted">
-                    Software Engineer
-                  </span>
-                </div>
-              </div>
-              <div className="p-lg border-l-2 border-divider-subtle bg-surface-container/30">
-                <p className="font-body-md text-body-md text-on-surface italic mb-lg">
-                  "I finally have a handle on my monthly spending. The charts are super intuitive and help me save every
-                  month."
-                </p>
-                <div className="flex flex-col">
-                  <span className="font-mono-data text-mono-data font-bold">Neha Sharma</span>
-                  <span className="font-mono-telemetry text-mono-telemetry text-text-muted">
-                    Graphic Designer
-                  </span>
-                </div>
-              </div>
-              <div className="p-lg border-l-2 border-divider-subtle bg-surface-container/30">
-                <p className="font-body-md text-body-md text-on-surface italic mb-lg">
-                  "HisabKitab treats my daily money with the care it deserves. It has completely changed how I manage my
-                  salary."
-                </p>
-                <div className="flex flex-col">
-                  <span className="font-mono-data text-mono-data font-bold">Rahul Verma</span>
-                  <span className="font-mono-telemetry text-mono-telemetry text-text-muted">
-                    Student
-                  </span>
-                </div>
-              </div>
+          {/* Bottom Row (Screenshot 4) */}
+          <div className="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div>
+              © 2026, all rights reserved. Made with ❤️ in India.
             </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-24 md:py-[120px] bg-white relative overflow-hidden border-y border-divider-subtle">
-          <div className="absolute inset-0 z-0 opacity-5">
-            <div className="w-full h-full bg-[radial-gradient(circle_at_center,#1F2BC8_0,transparent_1px)] bg-[size:24px_24px]"></div>
-          </div>
-          <div className="px-4 sm:px-8 md:px-margin-safe max-w-[1728px] mx-auto relative z-10 text-center">
-            <h2 className="font-hero-headline text-3xl sm:text-5xl lg:text-hero-headline mb-lg">
-              Built for simplicity. <br className="hidden sm:inline" />
-              Ready today.
-            </h2>
-            <p className="font-body-lg text-body-lg text-text-muted mb-xl max-w-2xl mx-auto">
-              Join thousands of everyday users who manage their daily budgets and expenses with absolute ease.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-md max-w-xs sm:max-w-none mx-auto">
-              <button
-                onClick={() => navigate("/app")}
-                className="bg-on-surface text-surface px-xl py-md font-bold text-body-md rounded shadow-xl hover:scale-105 transition-transform"
-              >
-                Get Started for Free
-              </button>
+            <div className="flex items-center gap-4">
+              <span>Sitemap</span>
+              <span>•</span>
               <a
-                href="https://mailmeatdarshan.github.io/HisabKitabShowCase/"
+                href="https://github.com/mailmeatdarshan/HisabKitab"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border border-divider-subtle text-on-surface px-xl py-md font-bold text-body-md rounded hover:bg-surface-container transition-all flex items-center justify-center"
+                className="hover:text-slate-400 transition-colors"
               >
-                Documentation
+                Open Source
               </a>
+              <span>•</span>
+              <span>Privacy First</span>
             </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-background-deep border-t border-divider-subtle w-full py-xl">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-lg px-4 sm:px-8 md:px-margin-safe max-w-[1728px] mx-auto">
-          <div className="col-span-2">
-            <div className="flex items-center gap-sm mb-md">
-              <img
-                alt="Logo"
-                className="w-6 h-6"
-                src="https://lh3.googleusercontent.com/aida/AP1WRLuRMAcz5O7FEEgIgqKC5mIVbjb2H_CncxnVoX1Y5nzF8XAPr1fTSjPfzJYOSzDcaEU-V4TpccxA-pmwhq47saTSjtAM9owmoh7yKmsEwDo0sI4BZg_WFg1xr5p3GCBwnRGgMgh9P-HPi9jeWJ5vhrLj5eGIxwp6HQcGU40YkFmGJLqLIZjAsWsKnjwGWZhgUPcUgXNmEXWyUl6b0sOHn0-PnzNYOrxJ5Td0jUg6ePMTN_v3YiiYCyFm_NWH"
-              />
-              <span className="font-h3 text-h3 text-on-surface font-bold tracking-tighter">HisabKitab</span>
-            </div>
-            <p className="font-mono-data text-mono-data text-text-muted mb-md max-w-xs">
-              Simple and smart expense tracking for everyone. Organize your daily budget and achieve your saving goals.
-            </p>
-            <div className="flex gap-md">
-              <span className="material-symbols-outlined text-text-muted hover:text-accent-cyan-soft cursor-pointer">
-                share
-              </span>
-              <span className="material-symbols-outlined text-text-muted hover:text-accent-cyan-soft cursor-pointer">
-                shield
-              </span>
-              <span className="material-symbols-outlined text-text-muted hover:text-accent-cyan-soft cursor-pointer">
-                help
-              </span>
-            </div>
-          </div>
-          <div>
-            <h5 className="font-mono-telemetry text-mono-telemetry text-on-surface uppercase tracking-[0.1em] mb-md">
-              Features
-            </h5>
-            <ul className="space-y-sm">
-              <li>
-                <button
-                  onClick={() => navigate("/app")}
-                  className="font-mono-data text-mono-data text-text-muted hover:text-accent-cyan-soft transition-colors text-left"
-                >
-                  Expense Tracker
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate("/app")}
-                  className="font-mono-data text-mono-data text-text-muted hover:text-accent-cyan-soft transition-colors text-left"
-                >
-                  Charts & Insights
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate("/app")}
-                  className="font-mono-data text-mono-data text-text-muted hover:text-accent-cyan-soft transition-colors text-left"
-                >
-                  Cloud Backup
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigate("/app")}
-                  className="font-mono-data text-mono-data text-text-muted hover:text-accent-cyan-soft transition-colors text-left"
-                >
-                  Guest Mode
-                </button>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="font-mono-telemetry text-mono-telemetry text-on-surface uppercase tracking-[0.1em] mb-md">
-              App Links
-            </h5>
-            <ul className="space-y-sm">
-              <li>
-                <a
-                  className="font-mono-data text-mono-data text-text-muted hover:text-accent-cyan-soft transition-colors"
-                  href="https://mailmeatdarshan.github.io/HisabKitabShowCase/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a
-                  className="font-mono-data text-mono-data text-text-muted hover:text-accent-cyan-soft transition-colors"
-                  href="https://mailmeatdarshan.github.io/HisabKitabShowCase/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">System Status: Active</span>
-              </li>
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">Security: Encrypted</span>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="font-mono-telemetry text-mono-telemetry text-on-surface uppercase tracking-[0.1em] mb-md">
-              Company
-            </h5>
-            <ul className="space-y-sm">
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">Privacy Policy</span>
-              </li>
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">Terms of Service</span>
-              </li>
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">Data Processing</span>
-              </li>
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">Compliance</span>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="font-mono-telemetry text-mono-telemetry text-on-surface uppercase tracking-[0.1em] mb-md">
-              Get Help
-            </h5>
-            <ul className="space-y-sm">
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">Help Center</span>
-              </li>
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">Community</span>
-              </li>
-              <li>
-                <span className="font-mono-data text-mono-data text-text-muted cursor-default block">Contact Devs</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-xl pt-lg border-t border-divider-subtle px-4 sm:px-8 md:px-margin-safe max-w-[1728px] mx-auto flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left">
-          <span className="font-mono-data text-mono-data text-text-muted">
-            © 2024 HisabKitab Personal Finance. All rights reserved.
-          </span>
-          <div className="flex items-center gap-lg mt-4 md:mt-0">
-            <span className="font-mono-telemetry text-mono-telemetry text-text-muted">SECURE DATA: 100%</span>
-            <span className="font-mono-telemetry text-mono-telemetry text-accent-lime">CLOUD SYNC: READY</span>
           </div>
         </div>
       </footer>

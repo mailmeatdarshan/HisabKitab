@@ -28,12 +28,6 @@ export default function Navbar({ isOpen, onClose, setIsOpen, loading, isSummaryO
           <NavLink to="/app">
             <img title="Home" alt="logo" className="h-12 w-12 md:h-20 md:w-20 inline" src="/expenses.png" />
           </NavLink>
-          {!authenticated && (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium animate-pulse shadow-sm">
-              <CloudOff className="w-3.5 h-3.5" />
-              <span>Guest Mode (Saved Locally)</span>
-            </div>
-          )}
         </div>
 
         {/* Desktop buttons */}

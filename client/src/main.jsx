@@ -21,8 +21,16 @@ const router = createBrowserRouter([
     element: <LandingPage />,
   },
   {
+    path: "/landing",
+    element: <LandingPage />,
+  },
+  {
     path: "/app",
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "/app/recordlist",

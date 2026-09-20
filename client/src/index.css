@@ -38,3 +38,71 @@ body {
 @keyframes dash {
     to { stroke-dashoffset: -1000; }
 }
+
+/* Ultra-Premium 3D Frosted Glass Effect */
+.glass3d {
+    --filter-glass3d: blur(36px) brightness(1.05) saturate(2.2);
+    --color-glass3d: rgba(255, 255, 255, 0.62);
+    --noise-glass3d: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
+
+    position: relative;
+    border-radius: 1.25rem;
+    box-shadow:
+        0 0 1px rgba(0, 0, 0, 0.08),
+        0 2px 4px -1px rgba(0, 0, 0, 0.03),
+        0 6px 12px -2px rgba(0, 0, 0, 0.04),
+        0 12px 24px -4px rgba(0, 0, 0, 0.05),
+        0 20px 40px -8px rgba(0, 0, 0, 0.06);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass3d::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    overflow: hidden;
+    z-index: 1;
+
+    -webkit-backdrop-filter: var(--filter-glass3d);
+    backdrop-filter: var(--filter-glass3d);
+    background-color: var(--color-glass3d);
+    background-image: var(--noise-glass3d);
+    background-size: 120px;
+    background-repeat: repeat;
+    transition: all 0.35s ease;
+}
+
+.glass3d::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    overflow: hidden;
+    z-index: 2;
+
+    box-shadow:
+        inset 1px 1px 1.5px 0px rgba(255, 255, 255, 0.95),
+        inset -1px -1px 1px 0px rgba(255, 255, 255, 0.4),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+        inset 2px 2px 4px -1px rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(226, 232, 240, 0.65);
+}
+
+.glass3d > * {
+    position: relative;
+    z-index: 5;
+}
+
+/* Enhanced depth and deeper blur refraction when scrolled */
+.glass3d.glass3d-scrolled {
+    --filter-glass3d: blur(48px) brightness(1.03) saturate(2.4);
+    --color-glass3d: rgba(255, 255, 255, 0.74);
+    box-shadow:
+        0 0 1px rgba(0, 0, 0, 0.1),
+        0 4px 8px -2px rgba(0, 0, 0, 0.05),
+        0 12px 24px -4px rgba(0, 0, 0, 0.07),
+        0 24px 48px -8px rgba(0, 0, 0, 0.09);
+}
