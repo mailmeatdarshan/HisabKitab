@@ -7,10 +7,35 @@ const apiRoutes = require("./routes");
 
 const app = express();
 
+const allowedOrigins = (ServerConfig.CORS_ORIGIN || "http://localhost:5173")
+    .split(",")
+    .map((o) => o.trim().replace(/\/+$/, ""))
+    .filter(Boolean);
+
 app.use(
     cors({
-        origin: ServerConfig.CORS_ORIGIN,
+        origin: function (origin, callback) {
+            // Allow requests with no origin (mobile apps, curl, etc.)
+            if (!origin) return callback(null, true);
+
+            const normalizedOrigin = origin.replace(/\/+$/, "");
+            const isAllowed = allowedOrigins.some((allowed) => {
+                return (
+                    allowed === "*" ||
+                    normalizedOrigin === allowed.replace(/\/+$/, "")
+                );
+            });
+
+            if (isAllowed) {
+                callback(null, true);
+            } else {
+                console.warn(`[CORS Blocked] Origin: "${origin}" not in allowed origins:`, allowedOrigins);
+                callback(null, false);
+            }
+        },
         credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     })
 );
 app.use(express.json());

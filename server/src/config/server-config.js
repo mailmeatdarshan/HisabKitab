@@ -12,5 +12,5 @@ module.exports = {
   EMAIL: process.env.EMAIL_USER,
   GMAIL_PASS: process.env.EMAIL_PASS,
   REDIS_URL: process.env.REDIS_URL,
-  CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:5173",
+  CORS_ORIGIN: (process.env.CORS_ORIGIN || "http://localhost:5173").trim().replace(/\/+$/, ""),
 };
