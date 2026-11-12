@@ -142,21 +142,21 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
 
   return (
     <div className="w-full mt-4">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 bg-white dark:bg-[#1C1C1E] rounded-2xl shadow-sm border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white">
         
         {/* Left column: Bills & active list */}
         <div className="lg:col-span-8 space-y-8">
           
           {/* Bills tracker */}
           <div>
-            <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-              <Calendar className="w-5 h-5 text-gray-800" />
-              <h3 className="text-lg font-bold text-gray-800">
+            <div className="flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-zinc-800 pb-2">
+              <Calendar className="w-5 h-5 text-slate-700 dark:text-zinc-200" />
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 Payment Dues for {getMonthName(currentMonth)} {currentYear}
               </h3>
             </div>
             {subs.length === 0 ? (
-              <div className="text-center py-8 text-gray-400 text-sm">
+              <div className="text-center py-8 text-slate-400 dark:text-zinc-500 text-sm">
                 No active subscriptions. Add one on the right to start tracking bills.
               </div>
             ) : (
@@ -167,21 +167,21 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
                     <div 
                       key={sub.id} 
                       className={`flex flex-col justify-between p-4 border rounded-xl shadow-sm transition-all
-                        ${dueInfo.status === "paid" ? "bg-gray-50 border-gray-150" : "bg-white border-gray-200 hover:border-gray-300"}`}
+                        ${dueInfo.status === "paid" ? "bg-slate-50 dark:bg-zinc-900/60 border-slate-200 dark:border-zinc-800" : "bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-700 hover:border-slate-300 dark:hover:border-zinc-600"}`}
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h4 className="font-bold text-gray-900 text-base">{sub.name}</h4>
-                          <span className="text-xs text-gray-500 uppercase tracking-wider font-medium">
+                          <h4 className="font-bold text-slate-900 dark:text-white text-base">{sub.name}</h4>
+                          <span className="text-xs text-slate-500 dark:text-zinc-400 uppercase tracking-wider font-medium">
                             {sub.category}
                           </span>
                         </div>
-                        <span className="font-bold text-lg text-black">
+                        <span className="font-bold text-lg text-slate-900 dark:text-white">
                           ₹{sub.amount.toLocaleString("en-IN")}
                         </span>
                       </div>
                       
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-dashed border-gray-100">
+                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-dashed border-slate-100 dark:border-zinc-800">
                         <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${dueInfo.badgeClass}`}>
                           {dueInfo.icon}
                           <span>{dueInfo.label}</span>
@@ -191,7 +191,7 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
                           <button
                             onClick={() => handleRecordPayment(sub)}
                             disabled={loading}
-                            className="bg-black hover:bg-gray-950 text-white text-xs font-bold py-1.5 px-3 rounded shadow-sm hover:scale-[1.02] transition-all flex items-center gap-1 cursor-pointer"
+                            className="bg-[#00C58D] hover:bg-[#00b07e] text-white text-xs font-bold py-1.5 px-3.5 rounded-lg shadow-sm hover:scale-[1.02] transition-all flex items-center gap-1 cursor-pointer"
                           >
                             {loading ? <Loader className="w-3.5 h-3.5 animate-spin" /> : "Pay"}
                           </button>
@@ -206,17 +206,17 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
 
           {/* Active Subscriptions list */}
           <div>
-            <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-              <CreditCard className="w-5 h-5 text-gray-800" />
-              <h3 className="text-lg font-bold text-gray-800">Active Subscriptions</h3>
+            <div className="flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-zinc-800 pb-2">
+              <CreditCard className="w-5 h-5 text-slate-700 dark:text-zinc-200" />
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Active Subscriptions</h3>
             </div>
             {subs.length === 0 ? (
-              <div className="text-gray-400 text-sm italic">No recurring profiles configured.</div>
+              <div className="text-slate-400 dark:text-zinc-500 text-sm italic">No recurring profiles configured.</div>
             ) : (
-              <div className="overflow-x-auto border border-gray-100 rounded-xl">
+              <div className="overflow-x-auto border border-slate-200 dark:border-zinc-800 rounded-xl">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
+                    <tr className="bg-slate-50 dark:bg-zinc-900/80 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider border-b border-slate-200 dark:border-zinc-800">
                       <th className="p-3">Subscription</th>
                       <th className="p-3">Category</th>
                       <th className="p-3">Amount</th>
@@ -224,17 +224,17 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
                       <th className="p-3 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm">
+                  <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 text-sm">
                     {subs.map((sub) => (
-                      <tr key={sub.id} className="hover:bg-gray-50/50">
-                        <td className="p-3 font-semibold text-gray-950">{sub.name}</td>
-                        <td className="p-3 text-gray-600">{sub.category}</td>
-                        <td className="p-3 font-medium">₹{sub.amount.toLocaleString("en-IN")}</td>
-                        <td className="p-3 text-gray-500">Day {sub.billingDay} of month</td>
+                      <tr key={sub.id} className="hover:bg-slate-50/50 dark:hover:bg-zinc-800/40">
+                        <td className="p-3 font-semibold text-slate-900 dark:text-white">{sub.name}</td>
+                        <td className="p-3 text-slate-600 dark:text-zinc-300">{sub.category}</td>
+                        <td className="p-3 font-medium text-slate-900 dark:text-white">₹{sub.amount.toLocaleString("en-IN")}</td>
+                        <td className="p-3 text-slate-500 dark:text-zinc-400">Day {sub.billingDay} of month</td>
                         <td className="p-3 text-right">
                           <button
                             onClick={() => handleDeleteSub(sub.id)}
-                            className="text-gray-400 hover:text-red-500 p-1.5 rounded transition hover:bg-red-50 cursor-pointer"
+                            className="text-slate-400 hover:text-rose-500 p-1.5 rounded-lg transition hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer"
                             title="Delete subscription"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -251,15 +251,15 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
         </div>
 
         {/* Right column: Add subscription form */}
-        <div className="lg:col-span-4 lg:border-l lg:border-gray-100 lg:pl-6">
-          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
-            <Plus className="w-5 h-5 text-gray-800" />
-            <h3 className="text-lg font-bold text-gray-800">Add Subscription</h3>
+        <div className="lg:col-span-4 lg:border-l lg:border-slate-100 dark:lg:border-zinc-800 lg:pl-6">
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100 dark:border-zinc-800">
+            <Plus className="w-5 h-5 text-slate-700 dark:text-zinc-200" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Add Subscription</h3>
           </div>
           
           <form onSubmit={handleAddSubscription} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Name
               </label>
               <input
@@ -267,13 +267,13 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
                 placeholder="e.g. Netflix, Gym, Rent"
                 value={form.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-350 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Amount (₹)
               </label>
               <input
@@ -281,13 +281,13 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
                 placeholder="e.g. 199"
                 value={form.amount}
                 onChange={(e) => handleInputChange("amount", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-350 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Category
               </label>
               <input
@@ -295,13 +295,13 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
                 placeholder="e.g. Entertainment, Rent"
                 value={form.category}
                 onChange={(e) => handleInputChange("category", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-350 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Billing Day of Month
               </label>
               <input
@@ -311,17 +311,17 @@ export default function SubscriptionsPanel({ records, onRefresh }) {
                 placeholder="e.g. 15"
                 value={form.billingDay}
                 onChange={(e) => handleInputChange("billingDay", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-350 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
                 required
               />
-              <span className="text-[10px] text-gray-400 block mt-1">
+              <span className="text-[10px] text-slate-400 dark:text-zinc-500 block mt-1">
                 Select 1 to 31. Dues automatically activate on this day of the month.
               </span>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-black text-white py-2.5 rounded-lg text-sm font-bold shadow hover:bg-gray-950 transition-all flex items-center justify-center gap-2 cursor-pointer mt-6"
+              className="w-full bg-[#00C58D] hover:bg-[#00b07e] text-white py-2.5 rounded-xl text-sm font-bold shadow-md shadow-[#00C58D]/25 transition-all flex items-center justify-center gap-2 cursor-pointer mt-6"
             >
               <Plus className="w-4 h-4" />
               Add Subscription

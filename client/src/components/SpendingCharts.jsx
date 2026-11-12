@@ -41,7 +41,8 @@ export default function SpendingCharts({ records, filteredRecordsChart, months }
       {
         label: "Monthly Spending",
         data: monthlyData.map((d) => d.amount),
-        backgroundColor: "#4b5513",
+        backgroundColor: "#00C58D",
+        borderRadius: 6,
       },
     ],
   };
@@ -81,9 +82,9 @@ export default function SpendingCharts({ records, filteredRecordsChart, months }
 
   return (
     <div className="w-full mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 p-3 md:p-6 bg-white rounded-xl shadow-xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 p-4 md:p-6 bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm">
         <div>
-          <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-800">📊 Monthly Spending</h2>
+          <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-slate-900 dark:text-white">📊 Monthly Spending</h2>
           <div className="w-full">
             <Bar
               data={barData}
@@ -114,7 +115,7 @@ export default function SpendingCharts({ records, filteredRecordsChart, months }
           </div>
         </div>
         <div>
-          <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-800">🥧 Spending by Category</h2>
+          <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-slate-900 dark:text-white">🥧 Spending by Category</h2>
           <div className="w-full flex justify-center">
             {pieData ? (
               <div className="w-full max-w-[300px] md:max-w-[400px]">
@@ -136,7 +137,7 @@ export default function SpendingCharts({ records, filteredRecordsChart, months }
                 />
               </div>
             ) : (
-              <div className="text-gray-500 text-center py-10 md:py-20 mt-10 md:mt-40">Select the month to see the Data</div>
+              <div className="text-slate-400 dark:text-zinc-500 text-center py-10 md:py-20 mt-10 md:mt-40">Select the month to see the Data</div>
             )}
           </div>
         </div>

@@ -8,6 +8,146 @@ body {
     -webkit-text-size-adjust: 100%;
 }
 
+html.dark,
+html.dark body {
+    color-scheme: dark;
+    background-color: #121214;
+    color: #F4F4F5;
+}
+
+html.dark select,
+html.dark option {
+    background-color: #1C1C1E;
+    color: #FFFFFF;
+}
+
+html:not(.dark),
+html:not(.dark) body {
+    color-scheme: light;
+    background-color: #F8FAFC;
+    color: #0F172A;
+}
+
+html:not(.dark) select,
+html:not(.dark) option {
+    background-color: #FFFFFF;
+    color: #0F172A;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LIGHT MODE FAILSAFE OVERRIDES
+   Forces all Tailwind dark: variant utilities to light-mode equivalents
+   when <html> does NOT have the .dark class.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* --- Zinc/Neutral Backgrounds --- */
+html:not(.dark) .dark\:bg-\[\#121214\] { background-color: #F8FAFC !important; }
+html:not(.dark) .dark\:bg-\[\#1C1C1E\] { background-color: #FFFFFF !important; }
+html:not(.dark) .dark\:bg-\[\#151515\] { background-color: #FFFFFF !important; }
+html:not(.dark) .dark\:bg-zinc-900,
+html:not(.dark) .dark\:bg-zinc-900\/80,
+html:not(.dark) .dark\:bg-zinc-900\/60 { background-color: #F8FAFC !important; }
+html:not(.dark) .dark\:bg-zinc-800,
+html:not(.dark) .dark\:bg-zinc-800\/40 { background-color: #F1F5F9 !important; }
+html:not(.dark) .dark\:bg-zinc-700 { background-color: #E2E8F0 !important; }
+
+/* --- Semantic Backgrounds (emerald, rose, amber, blue) --- */
+html:not(.dark) .dark\:bg-emerald-950\/20,
+html:not(.dark) .dark\:bg-emerald-950\/30,
+html:not(.dark) .dark\:bg-emerald-950\/40 { background-color: #ECFDF5 !important; }
+html:not(.dark) .dark\:bg-emerald-900\/40 { background-color: #D1FAE5 !important; }
+html:not(.dark) .dark\:bg-rose-950\/20,
+html:not(.dark) .dark\:bg-rose-950\/30,
+html:not(.dark) .dark\:bg-rose-950\/40 { background-color: #FFF1F2 !important; }
+html:not(.dark) .dark\:bg-rose-900\/40 { background-color: #FFE4E6 !important; }
+html:not(.dark) .dark\:bg-amber-950\/40 { background-color: #FFFBEB !important; }
+html:not(.dark) .dark\:bg-amber-900\/40 { background-color: #FEF3C7 !important; }
+html:not(.dark) .dark\:bg-blue-950\/40 { background-color: #EFF6FF !important; }
+
+/* --- Hover backgrounds --- */
+html:not(.dark) .dark\:hover\:bg-zinc-800:hover { background-color: #F1F5F9 !important; }
+html:not(.dark) .dark\:hover\:bg-zinc-700:hover { background-color: #E2E8F0 !important; }
+html:not(.dark) .dark\:hover\:bg-zinc-800\/40:hover { background-color: #F1F5F9 !important; }
+html:not(.dark) .dark\:hover\:bg-rose-900\/40:hover { background-color: #FFE4E6 !important; }
+html:not(.dark) .dark\:hover\:bg-rose-950\/30:hover { background-color: #FFE4E6 !important; }
+
+/* --- Text colors (zinc) --- */
+html:not(.dark) .dark\:text-white { color: #0F172A !important; }
+html:not(.dark) .dark\:text-zinc-100 { color: #0F172A !important; }
+html:not(.dark) .dark\:text-zinc-200 { color: #1E293B !important; }
+html:not(.dark) .dark\:text-zinc-300 { color: #334155 !important; }
+html:not(.dark) .dark\:text-zinc-400 { color: #64748B !important; }
+html:not(.dark) .dark\:text-zinc-500 { color: #94A3B8 !important; }
+html:not(.dark) .dark\:text-zinc-600 { color: #94A3B8 !important; }
+
+/* --- Text colors (semantic) --- */
+html:not(.dark) .dark\:text-emerald-200 { color: #065F46 !important; }
+html:not(.dark) .dark\:text-emerald-400 { color: #059669 !important; }
+html:not(.dark) .dark\:text-rose-200 { color: #9F1239 !important; }
+html:not(.dark) .dark\:text-rose-400 { color: #E11D48 !important; }
+html:not(.dark) .dark\:text-amber-400 { color: #D97706 !important; }
+html:not(.dark) .dark\:text-blue-400 { color: #2563EB !important; }
+
+/* --- Hover text --- */
+html:not(.dark) .dark\:hover\:text-white:hover { color: #0F172A !important; }
+
+/* --- Borders (zinc) --- */
+html:not(.dark) .dark\:border-zinc-800 { border-color: #E2E8F0 !important; }
+html:not(.dark) .dark\:border-zinc-800\/80 { border-color: #F1F5F9 !important; }
+html:not(.dark) .dark\:border-zinc-700 { border-color: #CBD5E1 !important; }
+html:not(.dark) .dark\:border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
+
+/* --- Borders (semantic) --- */
+html:not(.dark) .dark\:border-emerald-800,
+html:not(.dark) .dark\:border-emerald-800\/40 { border-color: #A7F3D0 !important; }
+html:not(.dark) .dark\:border-rose-800,
+html:not(.dark) .dark\:border-rose-800\/40,
+html:not(.dark) .dark\:border-rose-900\/60 { border-color: #FECDD3 !important; }
+html:not(.dark) .dark\:border-amber-800 { border-color: #FDE68A !important; }
+
+/* --- Dividers --- */
+html:not(.dark) .dark\:divide-zinc-800 > :not([hidden]) ~ :not([hidden]) { border-color: #F1F5F9 !important; }
+
+/* --- lg: responsive border (DebtsPanel left column border) --- */
+html:not(.dark) .dark\:lg\:border-zinc-800 { border-color: #E2E8F0 !important; }
+
+/* Sleek Slider Thumb Styling (From Parkin-son) */
+.sleek-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    transition: transform 0.2s ease;
+}
+.sleek-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00C58D;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(0, 197, 141, 0.4);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sleek-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00C58D;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 6px rgba(0, 197, 141, 0.4);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sleek-slider:hover::-webkit-slider-thumb {
+    transform: scale(1.25);
+    box-shadow: 0 0 12px rgba(0, 197, 141, 0.6);
+}
+.sleek-slider:hover::-moz-range-thumb {
+    transform: scale(1.25);
+    box-shadow: 0 0 12px rgba(0, 197, 141, 0.6);
+}
+
 *,
 *::before,
 *::after {

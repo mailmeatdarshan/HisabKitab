@@ -31,7 +31,7 @@ const Logout = () => {
   return (
     <button
       onClick={handleLogout}
-      className="border border-black bg-white text-black px-4 py-1.5 rounded hover:bg-black hover:text-white transition duration-300 ease-in-out"
+      className="border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 px-4 py-2 rounded-xl hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-950/30 dark:hover:text-rose-400 transition duration-200 text-sm font-semibold cursor-pointer shadow-sm"
       disabled={loading}
     >
       {loading ? 'Logging out...' : 'Logout'}

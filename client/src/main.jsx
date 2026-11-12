@@ -14,15 +14,19 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import SpendingCharts from "./components/SpendingCharts";
 import SplashScreen from "./components/SplashScreen";
 import LandingPage from "./components/LandingPage";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { SettingsProvider } from "./context/SettingsContext";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <LandingPage />,
+    errorElement: <ErrorBoundary />,
   },
   {
     path: "/landing",
     element: <LandingPage />,
+    errorElement: <ErrorBoundary />,
   },
   {
     path: "/app",
@@ -31,6 +35,7 @@ const router = createBrowserRouter([
         <App />
       </ProtectedRoute>
     ),
+    errorElement: <ErrorBoundary />,
     children: [
       {
         path: "/app/recordlist",
@@ -49,6 +54,10 @@ const router = createBrowserRouter([
         element: <RecordList />,
       },
       {
+        path: "/app/settings",
+        element: <RecordList />,
+      },
+      {
         index: true, 
         element: <SpendingCharts />,
       },
@@ -57,10 +66,12 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+    errorElement: <ErrorBoundary />,
   },
   {
     path: "/signup",
     element: <Signup />,
+    errorElement: <ErrorBoundary />,
   },
 ]);
 
@@ -77,6 +88,8 @@ const Root = () => {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Root />
+    <SettingsProvider>
+      <Root />
+    </SettingsProvider>
   </React.StrictMode>
 );

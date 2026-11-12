@@ -1,5 +1,6 @@
 import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
+import Sidebar from "./components/Sidebar";
 import { useCallback, useEffect, useState } from "react";
 import axiosInstance from "./utils/data-access";
 import { Loader } from "lucide-react";
@@ -9,11 +10,15 @@ import {
   clearGuestRecords 
 } from "./utils/local-storage-helper";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSettings } from "./context/SettingsContext";
 
 const App = () => {
+  const { theme } = useSettings();
+  const isDark = theme === 'dark';
   const [records, setRecords] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showSyncModal, setShowSyncModal] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -95,7 +100,20 @@ const App = () => {
   }, [fetchRecords]);
 
   return (
-    <div className="w-full p-3 md:p-6">
+    <div
+      className="w-full min-h-screen p-3 md:p-6 transition-colors duration-200"
+      style={{
+        backgroundColor: isDark ? '#121214' : '#F8FAFC',
+        color: isDark ? '#F4F4F5' : '#0F172A'
+      }}
+    >
+      <Sidebar
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
+        onOpenAddRecord={() => setIsOpen(true)}
+        onOpenSendSummary={() => setIsSummaryOpen(true)}
+      />
+
       <Navbar
         loading={loading}
         isOpen={isOpen}
@@ -105,10 +123,12 @@ const App = () => {
         setIsSummaryOpen={setIsSummaryOpen}
         onCloseSummary={onCloseSummary}
         fetchRecords={fetchRecords}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
       {loading ? (
         <div className="flex justify-center items-center h-64 mt-56">
-          <Loader className="text-lg w-20 h-20 font-semibold animate-spin" />
+          <Loader className="text-lg w-20 h-20 font-semibold animate-spin text-[#00C58D]" />
         </div>
       ) : (
         <Dashboard records={records} onDelete={handleDelete} onRefresh={fetchRecords} />
@@ -121,17 +141,17 @@ const App = () => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-md w-full border border-gray-100 flex flex-col gap-6"
+              className="bg-white dark:bg-[#1C1C1E] rounded-2xl shadow-2xl p-6 md:p-8 max-w-md w-full border border-slate-200 dark:border-zinc-800 flex flex-col gap-6"
             >
               <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
+                <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-[#00C58D] mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">Sync Unsaved Expenses</h3>
-                <p className="text-sm text-gray-500">
-                  We found <span className="font-semibold text-black">{guestCount}</span> expense records created in guest mode. 
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Sync Unsaved Expenses</h3>
+                <p className="text-sm text-slate-500 dark:text-zinc-400">
+                  We found <span className="font-semibold text-slate-900 dark:text-zinc-100">{guestCount}</span> expense records created in guest mode. 
                   Would you like to sync them with your account?
                 </p>
               </div>
@@ -140,14 +160,14 @@ const App = () => {
                 <button
                   onClick={handleDiscardSync}
                   disabled={syncing}
-                  className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition disabled:opacity-50"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-300 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-zinc-800 transition disabled:opacity-50 cursor-pointer"
                 >
                   Discard Local
                 </button>
                 <button
                   onClick={handleSync}
                   disabled={syncing}
-                  className="flex-1 px-4 py-2.5 rounded-lg bg-black text-white text-sm font-semibold hover:bg-gray-950 transition flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-[#00C58D] hover:bg-[#00b07e] text-white text-sm font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 shadow-md shadow-[#00C58D]/25 cursor-pointer"
                 >
                   {syncing ? (
                     <>

@@ -104,6 +104,23 @@ export default function Signup() {
     }
   };
 
+  const extractErrorMessage = (err, fallback = "Signup failed. Please try again.") => {
+    const data = err?.response?.data;
+    const exp = data?.error?.explanation || data?.message || data?.error;
+    if (!exp) return fallback;
+    if (typeof exp === "string") return exp;
+    if (Array.isArray(exp)) {
+      return exp
+        .map((item) => (typeof item === "string" ? item : item?.message || JSON.stringify(item)))
+        .filter(Boolean)
+        .join(". ") || fallback;
+    }
+    if (typeof exp === "object" && exp !== null) {
+      return exp.message || exp.explanation || JSON.stringify(exp);
+    }
+    return String(exp) || fallback;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError("");
@@ -121,11 +138,7 @@ export default function Signup() {
       }
       setErrors({});
     } catch (err) {
-      if (err.response?.data?.error?.explanation) {
-        setServerError(err.response.data.error.explanation);
-      } else {
-        setServerError("Signup failed. Please try again.");
-      }
+      setServerError(extractErrorMessage(err, "Signup failed. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -299,7 +312,7 @@ export default function Signup() {
           {serverError && (
             <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs font-medium flex items-center gap-2">
               <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
-              <span>{serverError}</span>
+              <span>{typeof serverError === "string" ? serverError : JSON.stringify(serverError)}</span>
             </div>
           )}
 

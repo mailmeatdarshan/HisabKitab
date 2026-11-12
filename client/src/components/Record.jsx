@@ -58,40 +58,40 @@ export const RecordCard = ({ record, onDelete, onRefresh }) => {
 
   if (isEditing) {
     return (
-      <div className="border rounded-lg p-4 bg-blue-50 shadow-sm">
+      <div className="border border-slate-200 dark:border-zinc-800 rounded-xl p-4 bg-slate-50 dark:bg-zinc-900/80 shadow-sm">
         <div className="flex flex-col gap-3">
           <div>
-            <label className="text-xs font-semibold text-gray-500">Amount</label>
+            <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Amount</label>
             <input
               type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-sm"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C58D] text-sm"
               value={editForm.amount}
               onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-500">Category</label>
+            <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Category</label>
             <input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-sm"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C58D] text-sm"
               value={editForm.category}
               onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-500">Date</label>
+            <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Date</label>
             <input
               type="date"
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-sm"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C58D] text-sm"
               value={editForm.Date}
               onChange={(e) => setEditForm({ ...editForm, Date: e.target.value })}
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-500">Note</label>
+            <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Note</label>
             <input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-sm"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C58D] text-sm"
               value={editForm.note}
               onChange={(e) => setEditForm({ ...editForm, note: e.target.value })}
             />
@@ -100,7 +100,7 @@ export const RecordCard = ({ record, onDelete, onRefresh }) => {
             <button
               onClick={handleEditSave}
               disabled={loading}
-              className="flex-1 px-3 py-2 text-sm bg-black text-white rounded hover:bg-gray-800 transition disabled:opacity-50"
+              className="flex-1 px-3 py-2 text-sm bg-[#00C58D] hover:bg-[#00b07e] text-white rounded-lg font-semibold transition disabled:opacity-50 cursor-pointer shadow-sm"
             >
               {loading ? "..." : "Save"}
             </button>
@@ -110,7 +110,7 @@ export const RecordCard = ({ record, onDelete, onRefresh }) => {
                 setEditForm({ amount, category, Date: dateFormat, note: note || "" });
               }}
               disabled={loading}
-              className="flex-1 px-3 py-2 text-sm bg-gray-200 text-black rounded hover:bg-gray-300 transition"
+              className="flex-1 px-3 py-2 text-sm border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 transition cursor-pointer"
             >
               Cancel
             </button>
@@ -121,29 +121,29 @@ export const RecordCard = ({ record, onDelete, onRefresh }) => {
   }
 
   return (
-    <div className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition">
+    <div className="border border-slate-200 dark:border-zinc-800 rounded-xl p-4 bg-white dark:bg-[#1C1C1E] shadow-sm hover:shadow-md transition">
       <div className="flex justify-between items-start mb-2">
-        <span className="text-lg font-bold">₹{amount}</span>
-        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{dateFormat}</span>
+        <span className="text-lg font-bold text-slate-900 dark:text-white">₹{amount}</span>
+        <span className="text-xs text-slate-500 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-800 px-2.5 py-1 rounded-full font-medium">{dateFormat}</span>
       </div>
       <div className="mb-1">
-        <span className="text-sm font-medium text-gray-700">{category}</span>
+        <span className="text-sm font-semibold text-slate-700 dark:text-zinc-300">{category}</span>
       </div>
       {note && (
-        <p className="text-xs text-gray-500 mb-3">{note}</p>
+        <p className="text-xs text-slate-500 dark:text-zinc-400 mb-3">{note}</p>
       )}
-      <div className="flex gap-2 pt-2 border-t border-gray-100">
+      <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
         <button
           onClick={() => setIsEditing(true)}
           disabled={loading}
-          className="flex-1 px-3 py-1.5 text-xs border border-black bg-white text-black rounded hover:bg-black hover:text-white transition"
+          className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 transition font-medium cursor-pointer"
         >
           Edit
         </button>
         <button
           onClick={handleDelete}
           disabled={loading}
-          className="flex-1 px-3 py-1.5 text-xs border border-red-500 bg-white text-red-500 rounded hover:bg-red-500 hover:text-white transition"
+          className="flex-1 px-3 py-1.5 text-xs border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/40 transition font-medium cursor-pointer"
         >
           {loading ? "..." : "Delete"}
         </button>
@@ -208,11 +208,11 @@ export const Record = ({ record, onDelete, onRefresh }) => {
 
   if (isEditing) {
     return (
-      <tr className="border-b transition-colors bg-blue-50">
+      <tr className="border-b border-slate-200 dark:border-zinc-800 transition-colors bg-slate-50 dark:bg-zinc-900/60">
         <td className="p-4 align-middle">
           <input
             type="number"
-            className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+            className="w-full px-2 py-1 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white rounded focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
             value={editForm.amount}
             onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
           />
@@ -220,7 +220,7 @@ export const Record = ({ record, onDelete, onRefresh }) => {
         <td className="p-4 align-middle">
           <input
             type="text"
-            className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+            className="w-full px-2 py-1 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white rounded focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
             value={editForm.category}
             onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
           />
@@ -228,7 +228,7 @@ export const Record = ({ record, onDelete, onRefresh }) => {
         <td className="p-4 align-middle">
           <input
             type="date"
-            className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+            className="w-full px-2 py-1 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white rounded focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
             value={editForm.Date}
             onChange={(e) => setEditForm({ ...editForm, Date: e.target.value })}
           />
@@ -236,7 +236,7 @@ export const Record = ({ record, onDelete, onRefresh }) => {
         <td className="p-4 align-middle">
           <input
             type="text"
-            className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+            className="w-full px-2 py-1 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-white rounded focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
             value={editForm.note}
             onChange={(e) => setEditForm({ ...editForm, note: e.target.value })}
           />
@@ -246,7 +246,7 @@ export const Record = ({ record, onDelete, onRefresh }) => {
             <button
               onClick={handleEditSave}
               disabled={loading}
-              className="px-3 py-1 text-sm bg-black text-white rounded hover:bg-gray-800 transition disabled:opacity-50"
+              className="px-3 py-1.5 text-xs bg-[#00C58D] hover:bg-[#00b07e] text-white rounded-lg font-semibold transition disabled:opacity-50 cursor-pointer shadow-sm"
             >
               {loading ? "..." : "Save"}
             </button>
@@ -256,7 +256,7 @@ export const Record = ({ record, onDelete, onRefresh }) => {
                 setEditForm({ amount, category, Date: dateFormat, note: note || "" });
               }}
               disabled={loading}
-              className="px-3 py-1 text-sm bg-gray-200 text-black rounded hover:bg-gray-300 transition"
+              className="px-3 py-1.5 text-xs border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 transition cursor-pointer"
             >
               Cancel
             </button>
@@ -267,24 +267,24 @@ export const Record = ({ record, onDelete, onRefresh }) => {
   }
 
   return (
-    <tr className="border-b transition-colors hover:bg-muted/50">
-      <td className="p-4 align-middle">{amount}</td>
-      <td className="p-4 align-middle">{category}</td>
-      <td className="p-4 align-middle">{dateFormat}</td>
-      <td className="p-4 align-middle">{note}</td>
+    <tr className="border-b border-slate-100 dark:border-zinc-800/80 transition-colors hover:bg-slate-50/50 dark:hover:bg-zinc-800/40 text-slate-800 dark:text-zinc-200">
+      <td className="p-4 align-middle font-bold text-slate-900 dark:text-white">₹{amount}</td>
+      <td className="p-4 align-middle font-medium text-slate-700 dark:text-zinc-300">{category}</td>
+      <td className="p-4 align-middle text-slate-500 dark:text-zinc-400 text-xs">{dateFormat}</td>
+      <td className="p-4 align-middle text-slate-600 dark:text-zinc-400 text-sm">{note || "—"}</td>
       <td className="p-4 align-middle">
         <div className="flex gap-2">
           <button
             onClick={() => setIsEditing(true)}
             disabled={loading}
-            className="px-3 py-1 text-sm border border-black bg-white text-black rounded hover:bg-black hover:text-white transition"
+            className="px-3 py-1 text-xs border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 transition font-medium cursor-pointer"
           >
             Edit
           </button>
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="px-3 py-1 text-sm border border-red-500 bg-white text-red-500 rounded hover:bg-red-500 hover:text-white transition"
+            className="px-3 py-1 text-xs border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/40 transition font-medium cursor-pointer"
           >
             {loading ? "..." : "Delete"}
           </button>

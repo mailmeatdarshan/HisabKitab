@@ -159,46 +159,46 @@ export default function DebtsPanel({ onRefresh }) {
     <div className="w-full mt-4">
       {/* Summary Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div className="bg-emerald-50 border border-emerald-250 p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider block">You Lent (To Receive)</span>
-            <span className="text-2xl font-bold text-emerald-950">₹{totalLent.toLocaleString("en-IN")}</span>
+            <span className="text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider block">You Lent (To Receive)</span>
+            <span className="text-2xl font-bold text-emerald-950 dark:text-emerald-200">₹{totalLent.toLocaleString("en-IN")}</span>
           </div>
-          <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+          <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
             <TrendingUp className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-rose-50 border border-rose-250 p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-800/40 p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-xs font-bold text-rose-800 uppercase tracking-wider block">You Borrowed (To Pay)</span>
-            <span className="text-2xl font-bold text-rose-950">₹{totalBorrowed.toLocaleString("en-IN")}</span>
+            <span className="text-xs font-bold text-rose-800 dark:text-rose-400 uppercase tracking-wider block">You Borrowed (To Pay)</span>
+            <span className="text-2xl font-bold text-rose-950 dark:text-rose-200">₹{totalBorrowed.toLocaleString("en-IN")}</span>
           </div>
-          <div className="w-12 h-12 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+          <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/40 flex items-center justify-center text-rose-600 dark:text-rose-400">
             <TrendingDown className="w-6 h-6" />
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 bg-white dark:bg-[#1C1C1E] rounded-2xl shadow-sm border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white">
         {/* Left: Outstanding & Settle History */}
         <div className="lg:col-span-8 space-y-8">
           {/* Outstanding Debts */}
           <div>
-            <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-              <Users className="w-5 h-5 text-gray-800" />
-              <h3 className="text-lg font-bold text-gray-800">Outstanding Debts</h3>
+            <div className="flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-zinc-800 pb-2">
+              <Users className="w-5 h-5 text-slate-700 dark:text-zinc-200" />
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Outstanding Debts</h3>
             </div>
 
             {activeDebts.length === 0 ? (
-              <div className="text-center py-8 text-gray-400 text-sm">
+              <div className="text-center py-8 text-slate-400 dark:text-zinc-500 text-sm">
                 No outstanding debts. Add a record on the right to start tracking lending & borrowing.
               </div>
             ) : (
-              <div className="overflow-x-auto border border-gray-100 rounded-xl">
+              <div className="overflow-x-auto border border-slate-200 dark:border-zinc-800 rounded-xl">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
+                    <tr className="bg-slate-50 dark:bg-zinc-900/80 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider border-b border-slate-200 dark:border-zinc-800">
                       <th className="p-3">Person</th>
                       <th className="p-3">Type</th>
                       <th className="p-3">Amount</th>
@@ -206,25 +206,25 @@ export default function DebtsPanel({ onRefresh }) {
                       <th className="p-3 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm">
+                  <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 text-sm">
                     {activeDebts.map((debt) => {
                       const dueInfo = getDueDateStatus(debt.dueDate);
                       return (
-                        <tr key={debt.id} className="hover:bg-gray-50/50">
+                        <tr key={debt.id} className="hover:bg-slate-50/50 dark:hover:bg-zinc-800/40">
                           <td className="p-3">
-                            <span className="font-semibold text-gray-950 block">{debt.person}</span>
-                            {debt.note && <span className="text-xs text-gray-400">{debt.note}</span>}
+                            <span className="font-semibold text-slate-900 dark:text-white block">{debt.person}</span>
+                            {debt.note && <span className="text-xs text-slate-400 dark:text-zinc-500">{debt.note}</span>}
                           </td>
                           <td className="p-3">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border
                               ${debt.type === "lent" 
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-100" 
-                                : "bg-rose-50 text-rose-700 border-rose-100"}`}
+                                ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800" 
+                                : "bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800"}`}
                             >
                               {debt.type === "lent" ? "Lent" : "Borrowed"}
                             </span>
                           </td>
-                          <td className={`p-3 font-bold text-base ${debt.type === "lent" ? "text-emerald-700" : "text-rose-700"}`}>
+                          <td className={`p-3 font-bold text-base ${debt.type === "lent" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                             ₹{debt.amount.toLocaleString("en-IN")}
                           </td>
                           <td className="p-3">
@@ -237,15 +237,15 @@ export default function DebtsPanel({ onRefresh }) {
                             <button
                               onClick={() => handleSettleDebt(debt)}
                               disabled={loading}
-                              className="text-gray-500 hover:text-black p-1.5 rounded transition hover:bg-gray-100 cursor-pointer flex items-center gap-1 text-xs font-bold"
+                              className="text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white p-1.5 rounded-lg transition hover:bg-slate-100 dark:hover:bg-zinc-800 cursor-pointer flex items-center gap-1 text-xs font-bold"
                               title="Mark as Settled"
                             >
-                              <CheckSquare className="w-4 h-4 text-emerald-600" />
+                              <CheckSquare className="w-4 h-4 text-[#00C58D]" />
                               Settle
                             </button>
                             <button
                               onClick={() => handleDeleteDebt(debt.id)}
-                              className="text-gray-400 hover:text-red-500 p-1.5 rounded transition hover:bg-red-50 cursor-pointer"
+                              className="text-slate-400 hover:text-rose-500 p-1.5 rounded-lg transition hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer"
                               title="Delete record"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -263,14 +263,14 @@ export default function DebtsPanel({ onRefresh }) {
           {/* Settled History */}
           {settledDebts.length > 0 && (
             <div>
-              <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-                <RefreshCw className="w-4 h-4 text-gray-500" />
-                <h3 className="text-base font-bold text-gray-600">Settle History</h3>
+              <div className="flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-zinc-800 pb-2">
+                <RefreshCw className="w-4 h-4 text-slate-400" />
+                <h3 className="text-base font-bold text-slate-600 dark:text-zinc-400">Settle History</h3>
               </div>
-              <div className="overflow-x-auto border border-gray-100 rounded-xl opacity-75">
+              <div className="overflow-x-auto border border-slate-200 dark:border-zinc-800 rounded-xl opacity-80">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-gray-50 text-[10px] font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
+                    <tr className="bg-slate-50 dark:bg-zinc-900/80 text-[10px] font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider border-b border-slate-200 dark:border-zinc-800">
                       <th className="p-3">Person</th>
                       <th className="p-3">Type</th>
                       <th className="p-3">Amount</th>
@@ -278,12 +278,12 @@ export default function DebtsPanel({ onRefresh }) {
                       <th className="p-3 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 text-xs text-gray-500">
+                  <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 text-xs text-slate-500 dark:text-zinc-400">
                     {settledDebts.map((debt) => (
-                      <tr key={debt.id} className="hover:bg-gray-50/50">
+                      <tr key={debt.id} className="hover:bg-slate-50/50 dark:hover:bg-zinc-800/40">
                         <td className="p-3">
-                          <span className="font-semibold text-gray-700 block line-through">{debt.person}</span>
-                          {debt.note && <span className="text-[10px] text-gray-400">{debt.note}</span>}
+                          <span className="font-semibold text-slate-700 dark:text-zinc-300 block line-through">{debt.person}</span>
+                          {debt.note && <span className="text-[10px] text-slate-400 dark:text-zinc-500">{debt.note}</span>}
                         </td>
                         <td className="p-3">
                           <span className="text-[9px] font-bold uppercase tracking-wider">
@@ -297,7 +297,7 @@ export default function DebtsPanel({ onRefresh }) {
                         <td className="p-3 text-right">
                           <button
                             onClick={() => handleDeleteDebt(debt.id)}
-                            className="text-gray-400 hover:text-red-500 p-1.5 rounded transition hover:bg-red-50 cursor-pointer"
+                            className="text-slate-400 hover:text-rose-500 p-1.5 rounded transition hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer"
                             title="Delete history"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -313,15 +313,15 @@ export default function DebtsPanel({ onRefresh }) {
         </div>
 
         {/* Right: Add Form */}
-        <div className="lg:col-span-4 lg:border-l lg:border-gray-100 lg:pl-6">
-          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
-            <UserPlus className="w-5 h-5 text-gray-800" />
-            <h3 className="text-lg font-bold text-gray-800">Add Debt Entry</h3>
+        <div className="lg:col-span-4 lg:border-l lg:border-slate-100 dark:lg:border-zinc-800 lg:pl-6">
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100 dark:border-zinc-800">
+            <UserPlus className="w-5 h-5 text-slate-700 dark:text-zinc-200" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Add Debt Entry</h3>
           </div>
 
           <form onSubmit={handleAddDebt} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Person Name
               </label>
               <input
@@ -329,13 +329,13 @@ export default function DebtsPanel({ onRefresh }) {
                 placeholder="e.g. Vivek, Amit, Neha"
                 value={form.person}
                 onChange={(e) => handleInputChange("person", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-350 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Transaction Type
               </label>
               <div className="flex gap-2">
@@ -344,8 +344,8 @@ export default function DebtsPanel({ onRefresh }) {
                   onClick={() => handleInputChange("type", "lent")}
                   className={`flex-1 py-2 rounded-lg text-xs font-bold border text-center transition-all cursor-pointer
                     ${form.type === "lent"
-                      ? "bg-emerald-50 text-emerald-700 border-emerald-600"
-                      : "bg-white text-gray-500 border-gray-300 hover:bg-gray-50"
+                      ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-500"
+                      : "bg-white dark:bg-zinc-900 text-slate-500 dark:text-zinc-400 border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800"
                     }`}
                 >
                   I Lent Money
@@ -355,8 +355,8 @@ export default function DebtsPanel({ onRefresh }) {
                   onClick={() => handleInputChange("type", "borrowed")}
                   className={`flex-1 py-2 rounded-lg text-xs font-bold border text-center transition-all cursor-pointer
                     ${form.type === "borrowed"
-                      ? "bg-rose-50 text-rose-700 border-rose-600"
-                      : "bg-white text-gray-500 border-gray-300 hover:bg-gray-50"
+                      ? "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border-rose-500"
+                      : "bg-white dark:bg-zinc-900 text-slate-500 dark:text-zinc-400 border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800"
                     }`}
                 >
                   I Borrowed Money
@@ -365,7 +365,7 @@ export default function DebtsPanel({ onRefresh }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Amount (₹)
               </label>
               <input
@@ -373,13 +373,13 @@ export default function DebtsPanel({ onRefresh }) {
                 placeholder="e.g. 500"
                 value={form.amount}
                 onChange={(e) => handleInputChange("amount", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-350 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Note / Description
               </label>
               <input
@@ -387,26 +387,26 @@ export default function DebtsPanel({ onRefresh }) {
                 placeholder="e.g. Lunch split, movie ticket"
                 value={form.note}
                 onChange={(e) => handleInputChange("note", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-350 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase mb-1">
                 Due Date
               </label>
               <input
                 type="date"
                 value={form.dueDate}
                 onChange={(e) => handleInputChange("dueDate", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-350 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D]"
                 required
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-black text-white py-2.5 rounded-lg text-sm font-bold shadow hover:bg-gray-950 transition-all flex items-center justify-center gap-2 cursor-pointer mt-6"
+              className="w-full bg-[#00C58D] hover:bg-[#00b07e] text-white py-2.5 rounded-xl text-sm font-bold shadow-md shadow-[#00C58D]/25 transition-all flex items-center justify-center gap-2 cursor-pointer mt-6"
             >
               <UserPlus className="w-4 h-4" />
               Add Debt Record

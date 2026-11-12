@@ -1,13 +1,15 @@
-import { ChartArea, FileSpreadsheet, Loader, CreditCard, Edit2, Check, X, Users, PiggyBank } from "lucide-react";
+import { ChartArea, FileSpreadsheet, Loader, CreditCard, Edit2, Check, X, Users, PiggyBank, Settings2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import RecordList from "./RecordList";
 import SpreadChart from "../components/SpendingCharts";
 import SubscriptionsPanel from "./SubscriptionsPanel";
 import DebtsPanel from "./DebtsPanel";
 import GullakPanel from "./GullakPanel";
+import SettingsPanel from "./SettingsPanel";
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/data-access";
 import { isUserAuthenticated, filterGuestRecords, getGuestSummary, getBudget, saveBudget } from "../utils/local-storage-helper";
+import { useSettings } from "../context/SettingsContext";
 
 const months = [
   "Jan",
@@ -25,6 +27,8 @@ const months = [
 ];
 
 const Dashboard = ({ records, onDelete, onRefresh }) => {
+  const { theme } = useSettings();
+  const isDark = theme === "dark";
   const [monthFilter, setMonthFilter] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -42,6 +46,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
   const isSubscriptions = location.pathname === "/app/subscriptions";
   const isDebts = location.pathname === "/app/debts";
   const isGullak = location.pathname === "/app/gullak";
+  const isSettings = location.pathname === "/app/settings";
 
   useEffect(() => {
     const b = getBudget();
@@ -96,8 +101,15 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
   const handleFilterRecordsChart = async (selectedMonthIdx) => {
     try {
       setLoading(true);
-      if (selectedMonthIdx === "" || selectedMonthIdx === undefined) {
-        alert("Please select month to filter");
+      if (
+        selectedMonthIdx === "" ||
+        selectedMonthIdx === undefined ||
+        selectedMonthIdx === null ||
+        isNaN(selectedMonthIdx) ||
+        selectedMonthIdx < 0
+      ) {
+        setDateFilterChart("");
+        setFilteredRecordsChart([]);
         setLoading(false);
         return;
       }
@@ -126,8 +138,19 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
   };
 
   const handleMonthDropdownChange = async (e) => {
-    const selectedMonthIdx = parseInt(e.target.value, 10) - 1;
-    setMonthFilter(e.target.value);
+    const rawVal = e.target.value;
+    setMonthFilter(rawVal);
+    if (!rawVal || rawVal === "") {
+      setDateFilterChart("");
+      setFilteredRecordsChart([]);
+      return;
+    }
+    const selectedMonthIdx = parseInt(rawVal, 10) - 1;
+    if (isNaN(selectedMonthIdx) || selectedMonthIdx < 0 || selectedMonthIdx > 11) {
+      setDateFilterChart("");
+      setFilteredRecordsChart([]);
+      return;
+    }
     await handleFilterRecordsChart(selectedMonthIdx);
   };
 
@@ -440,38 +463,78 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
   const colorClass = pct < 75 ? "bg-emerald-500" : pct <= 100 ? "bg-amber-500" : "bg-rose-500";
 
   return (
-    <div>
+    <div className="pb-8 md:pb-6">
       {/* Header: title + filters + view toggles */}
-      <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center md:gap-4 pr-0 md:pr-6 mb-4">
-        <h3 className="text-base md:text-lg font-semibold px-2 md:py-4">
-          {isDebts ? "Udhaar (Lend/Borrow) Tracker" : isSubscriptions ? "Bills & Subscriptions" : isGullak ? "Gullak (Savings Goals)" : isChart ? "Expense Charts" : "Expense Records"}
+      <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center md:gap-4 mb-4">
+        <h3 className="hidden md:block text-base md:text-lg font-bold px-2 md:py-4 text-slate-900 dark:text-white">
+          {isSettings ? "App Preferences & Settings" : isDebts ? "Udhaar (Lend/Borrow) Tracker" : isSubscriptions ? "Bills & Subscriptions" : isGullak ? "Gullak (Savings Goals)" : isChart ? "Expense Charts" : "Expense Records"}
         </h3>
 
-        {/* Filters (only show if not on subscriptions, debts, or gullak panel) */}
-        {!isSubscriptions && !isDebts && !isGullak && (
-          <div className="p-3 md:p-4 flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center bg-gray-50 rounded-lg shadow mb-2 md:mb-4">
+        {/* Filters (only show if not on subscriptions, debts, gullak, or settings panel) */}
+        {!isSubscriptions && !isDebts && !isGullak && !isSettings && (
+          <div className="p-3 md:p-4 flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center bg-white dark:bg-[#1C1C1E] rounded-xl border border-slate-200 dark:border-zinc-800 shadow-sm max-w-full">
             {!isChart ? (
               <select
-                className="border border-gray-300 rounded p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-slate-900 transition w-full sm:w-auto"
+                className="border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 rounded-lg p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#00C58D] transition w-full sm:w-auto cursor-pointer"
+                style={{
+                  backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+                  color: isDark ? "#FFFFFF" : "#0F172A",
+                  borderColor: isDark ? "#3F3F46" : "#E2E8F0"
+                }}
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
               >
-                <option value="">All Categories</option>
+                <option
+                  value=""
+                  style={{
+                    backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+                    color: isDark ? "#FFFFFF" : "#0F172A"
+                  }}
+                >
+                  All Categories
+                </option>
                 {[...new Set(records.map((d) => d.category))].map((category) => (
-                  <option key={category} value={category}>
+                  <option
+                    key={category}
+                    value={category}
+                    style={{
+                      backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+                      color: isDark ? "#FFFFFF" : "#0F172A"
+                    }}
+                  >
                     {category}
                   </option>
                 ))}
               </select>
             ) : (
               <select
-                className="border border-gray-300 rounded p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-full sm:w-auto"
+                className="border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 rounded-lg p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#00C58D] transition w-full sm:w-48 max-w-full cursor-pointer box-border"
+                style={{
+                  backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+                  color: isDark ? "#FFFFFF" : "#0F172A",
+                  borderColor: isDark ? "#3F3F46" : "#E2E8F0"
+                }}
                 value={monthFilter}
                 onChange={handleMonthDropdownChange}
               >
-                <option value="">Select Month</option>
+                <option
+                  value=""
+                  style={{
+                    backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+                    color: isDark ? "#FFFFFF" : "#0F172A"
+                  }}
+                >
+                  Select Month
+                </option>
                 {months.map((month, idx) => (
-                  <option key={idx} value={idx + 1}>
+                  <option
+                    key={idx}
+                    value={idx + 1}
+                    style={{
+                      backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+                      color: isDark ? "#FFFFFF" : "#0F172A"
+                    }}
+                  >
                     {month}
                   </option>
                 ))}
@@ -480,7 +543,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
             {!isChart && (
               <input
                 type="date"
-                className="border border-gray-300 rounded p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-full sm:w-auto"
+                className="border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 rounded-lg p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#00C58D] transition w-full sm:w-auto"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
               />
@@ -490,14 +553,14 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
                 <button
                   type="button"
                   onClick={handleFilterRecords}
-                  className="border border-black bg-black px-7 py-2 md:py-1.5 rounded hover:bg-white hover:text-black transition duration-300 ease-in-out text-white cursor-pointer text-sm md:text-base w-full sm:w-auto font-medium"
+                  className="bg-[#00C58D] hover:bg-[#00b07e] text-white px-7 py-2 md:py-1.5 rounded-lg transition duration-200 cursor-pointer text-sm md:text-base w-full sm:w-auto font-semibold shadow-sm shadow-[#00C58D]/20 active:scale-95"
                 >
                   Filter
                 </button>
                 <button
                   type="button"
                   onClick={handleExportCSV}
-                  className="flex items-center justify-center gap-1 border border-gray-350 bg-white text-gray-700 px-4 py-2 md:py-1.5 rounded hover:bg-gray-50 transition text-sm cursor-pointer font-semibold"
+                  className="flex items-center justify-center gap-1.5 border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-700 px-4 py-2 md:py-1.5 rounded-lg transition text-sm cursor-pointer font-semibold shadow-sm"
                   title="Export to CSV"
                 >
                   <span className="material-symbols-outlined text-base">download</span>
@@ -506,7 +569,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
                 <button
                   type="button"
                   onClick={handleExportPDF}
-                  className="flex items-center justify-center gap-1 border border-gray-350 bg-white text-gray-700 px-4 py-2 md:py-1.5 rounded hover:bg-gray-50 transition text-sm cursor-pointer font-semibold"
+                  className="flex items-center justify-center gap-1.5 border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-700 px-4 py-2 md:py-1.5 rounded-lg transition text-sm cursor-pointer font-semibold shadow-sm"
                   title="Export to PDF"
                 >
                   <span className="material-symbols-outlined text-base">picture_as_pdf</span>
@@ -517,117 +580,126 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
           </div>
         )}
 
-        {/* View toggles */}
-        <div className="flex gap-4 px-2 md:px-0 pb-2 md:pb-0">
+        {/* View toggles - Cleanly visible on Desktop */}
+        <div className="hidden md:flex items-center gap-4 px-2 md:px-0 pb-2 md:pb-0">
           <Users
-            className={`w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-indigo-600 transition ${isDebts ? "text-indigo-600 font-bold" : "text-gray-400"}`}
+            className={`w-6 h-6 cursor-pointer hover:text-indigo-500 transition ${isDebts ? "text-indigo-500 font-bold scale-110" : "text-slate-400 dark:text-zinc-500"}`}
             onClick={() => navigate("/app/debts")}
             title="Udhaar Tracker"
           />
           <CreditCard
-            className={`w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-blue-500 transition ${isSubscriptions ? "text-blue-500 font-bold" : "text-gray-400"}`}
+            className={`w-6 h-6 cursor-pointer hover:text-blue-500 transition ${isSubscriptions ? "text-blue-500 font-bold scale-110" : "text-slate-400 dark:text-zinc-500"}`}
             onClick={() => navigate("/app/subscriptions")}
             title="Bills & Subscriptions"
           />
           <PiggyBank
-            className={`w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-amber-500 transition ${isGullak ? "text-amber-500 font-bold" : "text-gray-400"}`}
+            className={`w-6 h-6 cursor-pointer hover:text-amber-500 transition ${isGullak ? "text-amber-500 font-bold scale-110" : "text-slate-400 dark:text-zinc-500"}`}
             onClick={() => navigate("/app/gullak")}
             title="Gullak (Savings Goals)"
           />
           <FileSpreadsheet
-            className={`w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-green-600 transition ${!isChart && !isSubscriptions && !isDebts && !isGullak ? "text-green-600 font-bold" : "text-gray-400"}`}
+            className={`w-6 h-6 cursor-pointer hover:text-[#00C58D] transition ${!isChart && !isSubscriptions && !isDebts && !isGullak && !isSettings ? "text-[#00C58D] font-bold scale-110" : "text-slate-400 dark:text-zinc-500"}`}
             onClick={() => navigate("/app/recordlist")}
             title="Expenses Records"
           />
           <ChartArea
-            className={`w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:text-red-600 transition ${isChart ? "text-red-600 font-bold" : "text-gray-400"}`}
+            className={`w-6 h-6 cursor-pointer hover:text-rose-500 transition ${isChart ? "text-rose-500 font-bold scale-110" : "text-slate-400 dark:text-zinc-500"}`}
             onClick={() => navigate("/app")}
             title="Spending Charts"
+          />
+          <Settings2
+            className={`w-6 h-6 cursor-pointer hover:text-slate-900 dark:hover:text-white transition ${isSettings ? "text-slate-900 dark:text-white font-bold scale-110" : "text-slate-400 dark:text-zinc-500"}`}
+            onClick={() => navigate("/app/settings")}
+            title="App Preferences & Settings"
           />
         </div>
       </div>
 
-      {/* Monthly Budget Card */}
-      <div className="mb-6 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-gray-500 text-2xl">account_balance_wallet</span>
-            <div>
-              <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Monthly Budget Tracker</h4>
-              <span className="text-xs text-gray-400">Current Month: {months[currentMonthIdx]} {currentYear}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {editBudgetMode ? (
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                const amount = parseInt(budgetInput, 10);
-                if (isNaN(amount) || amount < 0) {
-                  alert("Please enter a valid amount.");
-                  return;
-                }
-                saveBudget(amount);
-                setBudget(amount);
-                setEditBudgetMode(false);
-              }} className="flex items-center gap-2">
-                <input
-                  type="number"
-                  placeholder="Set Budget Limit"
-                  value={budgetInput}
-                  onChange={(e) => setBudgetInput(e.target.value)}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black max-w-[120px]"
-                />
-                <button type="submit" className="p-1.5 bg-black text-white hover:bg-gray-800 rounded transition cursor-pointer" title="Save">
-                  <Check className="w-4 h-4" />
-                </button>
-                <button type="button" onClick={() => { setEditBudgetMode(false); setBudgetInput(budget > 0 ? budget.toString() : ""); }} className="p-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded transition cursor-pointer" title="Cancel">
-                  <X className="w-4 h-4" />
-                </button>
-              </form>
-            ) : (
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  <span className="text-sm font-bold text-gray-900 block">
-                    {budget > 0 ? `₹${currentMonthSpending.toLocaleString("en-IN")} of ₹${budget.toLocaleString("en-IN")}` : "No budget set"}
-                  </span>
-                  <span className={`text-xs font-semibold ${budget === 0 ? "text-gray-400" : budget - currentMonthSpending >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
-                    {budget === 0 ? "Tap pencil to set limit" : budget - currentMonthSpending >= 0 ? `₹${(budget - currentMonthSpending).toLocaleString("en-IN")} remaining` : `₹${Math.abs(budget - currentMonthSpending).toLocaleString("en-IN")} over budget`}
-                  </span>
-                </div>
-                <button
-                  onClick={() => setEditBudgetMode(true)}
-                  className="p-1.5 hover:bg-gray-100 rounded text-gray-500 hover:text-black transition cursor-pointer"
-                  title="Edit Budget"
-                >
-                  <Edit2 className="w-4 h-4" />
-                </button>
+      {/* Monthly Budget Card (Shown for financial tracker panels) */}
+      {!isSettings && (
+        <div className="mb-6 p-4 bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-slate-400 dark:text-zinc-500 text-2xl">account_balance_wallet</span>
+              <div>
+                <h4 className="text-sm font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Monthly Budget Tracker</h4>
+                <span className="text-xs text-slate-400 dark:text-zinc-500">Current Month: {months[currentMonthIdx]} {currentYear}</span>
               </div>
-            )}
-          </div>
-        </div>
+            </div>
 
-        {budget > 0 && (
-          <div className="w-full">
-            <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${colorClass}`}
-                style={{ width: `${Math.min(pct, 100)}%` }}
-              ></div>
-            </div>
-            <div className="flex justify-between items-center mt-1 text-[10px] text-gray-400 font-medium">
-              <span>0%</span>
-              <span className="font-semibold text-gray-500">{pct.toFixed(1)}% spent</span>
-              <span>100%</span>
+            <div className="flex items-center gap-3">
+              {editBudgetMode ? (
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const amount = parseInt(budgetInput, 10);
+                  if (isNaN(amount) || amount < 0) {
+                    alert("Please enter a valid amount.");
+                    return;
+                  }
+                  saveBudget(amount);
+                  setBudget(amount);
+                  setEditBudgetMode(false);
+                }} className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    placeholder="Set Budget Limit"
+                    value={budgetInput}
+                    onChange={(e) => setBudgetInput(e.target.value)}
+                    className="px-3 py-1.5 border border-slate-200 dark:border-zinc-700 rounded-lg text-sm bg-white dark:bg-zinc-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00C58D] max-w-[120px]"
+                  />
+                  <button type="submit" className="p-1.5 bg-[#00C58D] hover:bg-[#00b07e] text-white rounded-lg transition cursor-pointer" title="Save">
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button type="button" onClick={() => { setEditBudgetMode(false); setBudgetInput(budget > 0 ? budget.toString() : ""); }} className="p-1.5 bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 rounded-lg transition cursor-pointer" title="Cancel">
+                    <X className="w-4 h-4" />
+                  </button>
+                </form>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-slate-900 dark:text-white block">
+                      {budget > 0 ? `₹${currentMonthSpending.toLocaleString("en-IN")} of ₹${budget.toLocaleString("en-IN")}` : "No budget set"}
+                    </span>
+                    <span className={`text-xs font-semibold ${budget === 0 ? "text-slate-400 dark:text-zinc-500" : budget - currentMonthSpending >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
+                      {budget === 0 ? "Tap pencil to set limit" : budget - currentMonthSpending >= 0 ? `₹${(budget - currentMonthSpending).toLocaleString("en-IN")} remaining` : `₹${Math.abs(budget - currentMonthSpending).toLocaleString("en-IN")} over budget`}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setEditBudgetMode(true)}
+                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+                    title="Edit Budget"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-        )}
-      </div>
+
+          {budget > 0 && (
+            <div className="w-full">
+              <div className="w-full bg-slate-100 dark:bg-zinc-800 h-2.5 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${colorClass}`}
+                  style={{ width: `${Math.min(pct, 100)}%` }}
+                ></div>
+              </div>
+              <div className="flex justify-between items-center mt-1 text-[10px] text-slate-400 dark:text-zinc-500 font-medium">
+                <span>0%</span>
+                <span className="font-semibold text-slate-500 dark:text-zinc-400">{pct.toFixed(1)}% spent</span>
+                <span>100%</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex justify-center items-center h-40 md:h-64 mt-20 md:mt-56">
           <Loader className="text-lg w-12 h-12 md:w-20 md:h-20 font-semibold animate-spin" />
         </div>
+      ) : isSettings ? (
+        <SettingsPanel />
       ) : isDebts ? (
         <DebtsPanel onRefresh={onRefresh} />
       ) : isSubscriptions ? (

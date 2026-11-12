@@ -9,7 +9,7 @@ export default function RecordList({ records, categoryFilter, dateFilter, filter
       {/* Mobile card layout */}
       <div className="md:hidden flex flex-col gap-3">
         {isEmpty ? (
-          <div className="text-center py-8 text-gray-500">No record found</div>
+          <div className="text-center py-8 text-slate-400 dark:text-zinc-500">No record found</div>
         ) : displayRecords.length > 0 ? (
           displayRecords.map((record) => (
             <RecordCard key={record._id} record={record} onDelete={onDelete} onRefresh={onRefresh} />
@@ -22,10 +22,10 @@ export default function RecordList({ records, categoryFilter, dateFilter, filter
       </div>
 
       {/* Desktop table layout */}
-      <div className="hidden md:block border rounded-lg overflow-hidden shadow bg-white">
+      <div className="hidden md:block border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-[#1C1C1E]">
         <div className="relative w-full overflow-auto">
           <table className="w-full text-sm">
-            <thead className="border-b bg-gray-100">
+            <thead className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/80 text-slate-700 dark:text-zinc-300">
               <tr>
                 <th className="h-12 px-4 text-left font-semibold">Amount</th>
                 <th className="h-12 px-4 text-left font-semibold">Category</th>
@@ -34,15 +34,15 @@ export default function RecordList({ records, categoryFilter, dateFilter, filter
                 <th className="h-12 px-4 text-left font-semibold">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100 dark:divide-zinc-800">
               {filteredRecords.length > 0 ? (
                 filteredRecords.map((record) => (
                   <Record key={record._id} record={record} onDelete={onDelete} onRefresh={onRefresh} />
                 ))
               ) : (filteredRecords.length === 0 && (categoryFilter || dateFilter)) ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-4 text-gray-500">
-                    No record found
+                  <td colSpan={5} className="text-center py-8 text-slate-400 dark:text-zinc-500">
+                    No records found
                   </td>
                 </tr>
               ) : (
