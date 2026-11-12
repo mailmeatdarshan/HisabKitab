@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useSettings, FONTS } from '../context/SettingsContext';
-import { Sun, Moon, RotateCcw, Maximize, CheckCircle2, User } from 'lucide-react';
+import { Sun, Moon, RotateCcw, Maximize, CheckCircle2, User, Download, Smartphone } from 'lucide-react';
 import axiosInstance from '../utils/data-access';
 import { isUserAuthenticated } from '../utils/local-storage-helper';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -214,6 +214,37 @@ export default function SettingsPanel() {
         setToast(msg);
         setTimeout(() => setToast(null), 3000);
     }, []);
+
+    const [installPrompt, setInstallPrompt] = useState(null);
+    const [isInstalled, setIsInstalled] = useState(false);
+
+    useEffect(() => {
+        const handleBeforeInstall = (e) => {
+            e.preventDefault();
+            setInstallPrompt(e);
+        };
+
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            setIsInstalled(true);
+        }
+
+        window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+        return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+    }, []);
+
+    const handleInstallClick = async () => {
+        if (installPrompt) {
+            installPrompt.prompt();
+            const { outcome } = await installPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showToast('HisabKitab app installed successfully!');
+                setInstallPrompt(null);
+                setIsInstalled(true);
+            }
+        } else {
+            showToast('To install: Tap browser menu (⋮ or Share) > Add to Home screen');
+        }
+    };
 
     const toggleFullscreen = useCallback(() => {
         if (!document.fullscreenElement) {
@@ -456,6 +487,34 @@ export default function SettingsPanel() {
                         </span>
                     </SettingRow>
                 )}
+            </SettingBlock>
+
+            {/* Section 6: Progressive Web App (PWA) */}
+            <SettingBlock
+                title="Application Install (PWA)"
+                description="Install HisabKitab on your phone or desktop for quick, full-screen native launching."
+                isDark={isDark}
+            >
+                <SettingRow
+                    title={
+                        <div className="flex items-center">
+                            <span>Install Native App</span>
+                            <Badge text={isInstalled ? "Installed" : "PWA Ready"} isDark={isDark} />
+                        </div>
+                    }
+                    description="Launch instantly from your phone home screen or PC dock without browser bars."
+                    isLast={true}
+                    isDark={isDark}
+                >
+                    <button
+                        type="button"
+                        onClick={handleInstallClick}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#00C58D] hover:bg-[#00b07e] transition cursor-pointer shadow-sm shadow-[#00C58D]/25"
+                    >
+                        {isInstalled ? <Smartphone className="w-3.5 h-3.5" /> : <Download className="w-3.5 h-3.5" />}
+                        <span>{isInstalled ? "App Installed" : "Install App"}</span>
+                    </button>
+                </SettingRow>
             </SettingBlock>
         </div>
     );

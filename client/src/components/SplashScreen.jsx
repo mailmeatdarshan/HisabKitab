@@ -10,14 +10,22 @@ const SplashScreen = ({ onFinish }) => {
   }, [onFinish]);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
+    <div 
+      className="fixed inset-0 flex flex-col items-center justify-center"
+      style={{ backgroundColor: "#FFFFFF", zIndex: 99999 }}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="mb-8"
       >
-        <img src="/expenses.png" alt="HisabKitab Logo" className="w-32 h-32 md:w-48 md:h-48 object-contain" />
+        <img 
+          src="/expenses.png" 
+          alt="HisabKitab Logo" 
+          className="w-32 h-32 md:w-48 md:h-48 object-contain"
+          style={{ display: "block" }} 
+        />
       </motion.div>
       
       {/* Line Loading Animation */}

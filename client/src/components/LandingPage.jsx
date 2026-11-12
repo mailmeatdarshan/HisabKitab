@@ -17,7 +17,6 @@ import {
   Menu,
   X,
   Twitter,
-  Instagram,
   Facebook,
   Linkedin,
   ShieldCheck,
@@ -712,15 +711,6 @@ export default function LandingPage() {
                   aria-label="Twitter"
                 >
                   <Twitter className="w-4 h-4" />
-                </a>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                  aria-label="Instagram"
-                >
-                  <Instagram className="w-4 h-4" />
                 </a>
                 <a
                   href="https://facebook.com"
