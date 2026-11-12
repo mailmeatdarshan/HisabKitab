@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../utils/data-access";
 import { isUserAuthenticated, filterGuestRecords, getGuestSummary, getBudget, saveBudget } from "../utils/local-storage-helper";
 import { useSettings } from "../context/SettingsContext";
+import { HISABKITAB_LOGO } from "../utils/logo-data";
 
 const months = [
   "Jan",
@@ -372,7 +373,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
       <body>
         <div class="header">
           <div class="brand">
-            <img class="logo" src="https://lh3.googleusercontent.com/aida/AP1WRLuRMAcz5O7FEEgIgqKC5mIVbjb2H_CncxnVoX1Y5nzF8XAPr1fTSjPfzJYOSzDcaEU-V4TpccxA-pmwhq47saTSjtAM9owmoh7yKmsEwDo0sI4BZg_WFg1xr5p3GCBwnRGgMgh9P-HPi9jeWJ5vhrLj5eGIxwp6HQcGU40YkFmGJLqLIZjAsWsKnjwGWZhgUPcUgXNmEXWyUl6b0sOHn0-PnzNYOrxJ5Td0jUg6ePMTN_v3YiiYCyFm_NWH" alt="HisabKitab Logo" />
+            <img class="logo" src="${HISABKITAB_LOGO}" alt="HisabKitab Logo" />
             <span class="brand-name">HisabKitab</span>
           </div>
           <div class="report-title">

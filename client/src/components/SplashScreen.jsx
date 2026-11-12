@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { HISABKITAB_LOGO } from "../utils/logo-data";
 
 const SplashScreen = ({ onFinish }) => {
   useEffect(() => {
@@ -11,21 +12,27 @@ const SplashScreen = ({ onFinish }) => {
 
   return (
     <div 
-      className="fixed inset-0 flex flex-col items-center justify-center"
+      className="fixed inset-0 flex flex-col items-center justify-center select-none"
       style={{ backgroundColor: "#FFFFFF", zIndex: 99999 }}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
+        initial={{ opacity: 0, scale: 0.6 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="mb-8"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="flex flex-col items-center mb-8"
       >
         <img 
-          src="/expenses.png" 
+          src={HISABKITAB_LOGO} 
           alt="HisabKitab Logo" 
-          className="w-32 h-32 md:w-48 md:h-48 object-contain"
+          className="w-28 h-28 md:w-36 md:h-36 object-contain mb-4"
           style={{ display: "block" }} 
         />
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+          Hisab<span className="text-[#00C58D]">Kitab</span>
+        </h1>
+        <p className="text-xs text-slate-500 font-medium tracking-wider uppercase mt-1">
+          Smart Expense Tracker
+        </p>
       </motion.div>
       
       {/* Line Loading Animation */}

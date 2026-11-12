@@ -94,12 +94,23 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   </React.StrictMode>
 );
 
+// Global PWA install prompt handler
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  window.deferredInstallPrompt = e;
+  window.dispatchEvent(new Event("pwa-prompt-ready"));
+});
+
 // Register PWA Service Worker for app installability
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js")
-      .then((reg) => console.log("PWA Service Worker registered:", reg.scope))
-      .catch((err) => console.log("PWA Service Worker registration failed:", err));
+      .register("/sw.js", { scope: "/" })
+      .then((reg) => {
+        console.log("PWA Service Worker registered with scope:", reg.scope);
+      })
+      .catch((err) => {
+        console.log("PWA Service Worker registration failed:", err);
+      });
   });
 }

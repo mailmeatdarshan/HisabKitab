@@ -35,14 +35,6 @@ function GoogleIcon({ className = "w-5 h-5" }) {
   );
 }
 
-function FacebookIcon({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} fill="#1877F2" viewBox="0 0 24 24">
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-    </svg>
-  );
-}
-
 function LottiePlayer({ animationPath, className = "" }) {
   const containerRef = useRef(null);
   const animRef = useRef(null);
@@ -82,7 +74,85 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [gsiLoaded, setGsiLoaded] = useState(false);
+  const googleBtnRef = useRef(null);
   const navigate = useNavigate();
+
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+  const handleGoogleSuccess = async (response) => {
+    if (!response?.credential) return;
+    setLoading(true);
+    setServerError("");
+    try {
+      const res = await axiosInstance.post("/auth/google", {
+        idToken: response.credential,
+      });
+      if (res.status === 200 && res.data?.data) {
+        localStorage.setItem("token", res.data.data);
+        navigate("/app");
+      }
+    } catch (err) {
+      setServerError(
+        extractErrorMessage(err, "Google sign-in failed. Please try again.")
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleClick = () => {
+    if (!googleClientId) {
+      setServerError(
+        "Google Sign-In is not configured yet. Please configure VITE_GOOGLE_CLIENT_ID in your environment."
+      );
+      return;
+    }
+    if (window.google?.accounts?.id) {
+      window.google.accounts.id.prompt();
+    } else {
+      setServerError("Google Sign-In service is loading. Please try again in a moment.");
+    }
+  };
+
+  useEffect(() => {
+    if (!googleClientId) return;
+
+    const initializeGsi = () => {
+      if (window.google?.accounts?.id && googleBtnRef.current) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: googleClientId,
+            callback: handleGoogleSuccess,
+          });
+          window.google.accounts.id.renderButton(googleBtnRef.current, {
+            theme: "outline",
+            size: "large",
+            width: 380,
+            text: "continue_with",
+            shape: "rectangular",
+            logo_alignment: "left",
+          });
+          setGsiLoaded(true);
+          return true;
+        } catch (e) {
+          console.error("Error initializing Google Identity Services:", e);
+        }
+      }
+      return false;
+    };
+
+    if (!initializeGsi()) {
+      const interval = setInterval(() => {
+        if (initializeGsi()) clearInterval(interval);
+      }, 250);
+      const timeout = setTimeout(() => clearInterval(interval), 5000);
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+      };
+    }
+  }, [googleClientId]);
 
   const validate = () => {
     const errs = {};
@@ -248,32 +318,22 @@ export default function Login() {
             Log In
           </h2>
 
-          {/* Social Action Button 1: Google (Clean Aesthetic Button) */}
-          <div className="space-y-3 mb-6">
-            <button
-              type="button"
-              onClick={() => {
-                setEmail("demo@hisabkitab.com");
-                setPassword("demo1234");
-              }}
-              className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-semibold py-3.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3 text-sm cursor-pointer"
-            >
-              <GoogleIcon className="w-5 h-5" />
-              <span>Continue with Google</span>
-            </button>
-
-            {/* Social Action Button 2: Facebook / Demo */}
-            <button
-              type="button"
-              onClick={() => {
-                setEmail("demo@hisabkitab.com");
-                setPassword("demo1234");
-              }}
-              className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-semibold py-3.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3 text-sm cursor-pointer"
-            >
-              <FacebookIcon className="w-5 h-5" />
-              <span>Continue with Facebook</span>
-            </button>
+          {/* Google Sign-In Button */}
+          <div className="mb-6">
+            <div
+              ref={googleBtnRef}
+              className={gsiLoaded ? "w-full flex justify-center min-h-[44px]" : "hidden"}
+            />
+            {!gsiLoaded && (
+              <button
+                type="button"
+                onClick={handleGoogleClick}
+                className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-semibold py-3.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3 text-sm cursor-pointer"
+              >
+                <GoogleIcon className="w-5 h-5" />
+                <span>Continue with Google</span>
+              </button>
+            )}
           </div>
 
           {/* Divider: "or" */}

@@ -8,6 +8,8 @@ router.post('/signup', UserMiddleware.validateUser ,UserController.signUp);
 
 router.post('/signin', UserController.signin);
 
+router.post('/google', UserController.googleAuth);
+
 router.post('/signout', UserMiddleware.checkAuth, UserController.signOut);
 router.get('/validate',UserMiddleware.checkAuth, function ex(req,res){
     return res.send( {data : req.user});

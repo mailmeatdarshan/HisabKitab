@@ -53,8 +53,24 @@ async function signOut(req, res) {
     }
 }
 
+async function googleAuth(req, res) {
+    try {
+        const { idToken } = req.body;
+        const response = await UserService.googleSignIn(idToken);
+        const successResponse = createSuccessResponse();
+        successResponse.data = response;
+        return res.status(StatusCodes.OK).json(successResponse);
+    } catch (error) {
+        console.log(error);
+        const errorResponse = createErrorResponse();
+        errorResponse.error = error;
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
 module.exports = {
     signUp,
     signin,
     signOut,
+    googleAuth,
 };

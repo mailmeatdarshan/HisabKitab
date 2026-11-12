@@ -219,9 +219,20 @@ export default function SettingsPanel() {
     const [isInstalled, setIsInstalled] = useState(false);
 
     useEffect(() => {
+        if (window.deferredInstallPrompt) {
+            setInstallPrompt(window.deferredInstallPrompt);
+        }
+
         const handleBeforeInstall = (e) => {
             e.preventDefault();
+            window.deferredInstallPrompt = e;
             setInstallPrompt(e);
+        };
+
+        const handlePromptReady = () => {
+            if (window.deferredInstallPrompt) {
+                setInstallPrompt(window.deferredInstallPrompt);
+            }
         };
 
         if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -229,16 +240,22 @@ export default function SettingsPanel() {
         }
 
         window.addEventListener('beforeinstallprompt', handleBeforeInstall);
-        return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+        window.addEventListener('pwa-prompt-ready', handlePromptReady);
+        return () => {
+            window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+            window.removeEventListener('pwa-prompt-ready', handlePromptReady);
+        };
     }, []);
 
     const handleInstallClick = async () => {
-        if (installPrompt) {
-            installPrompt.prompt();
-            const { outcome } = await installPrompt.userChoice;
+        const promptToUse = installPrompt || window.deferredInstallPrompt;
+        if (promptToUse) {
+            promptToUse.prompt();
+            const { outcome } = await promptToUse.userChoice;
             if (outcome === 'accepted') {
                 showToast('HisabKitab app installed successfully!');
                 setInstallPrompt(null);
+                window.deferredInstallPrompt = null;
                 setIsInstalled(true);
             }
         } else {

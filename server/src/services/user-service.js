@@ -5,6 +5,7 @@ const { StatusCodes } = require("http-status-codes");
 const { Auth } = require("../utils/common");
 const ServerConfig = require("../config/server-config");
 const { getRedisClient } = require("../config/redis-client-config");
+const crypto = require("crypto");
 const userRepo = new UserRepository();
 
 async function createUser(data) {
@@ -156,9 +157,98 @@ async function logOut(token) {
     }
 }
 
+async function googleSignIn(idToken) {
+    try {
+        if (!idToken) {
+            throw new AppErrors("Google ID token is required", StatusCodes.BAD_REQUEST);
+        }
+
+        // Verify token with Google's public tokeninfo endpoint
+        const googleRes = await fetch(
+            `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`
+        );
+        if (!googleRes.ok) {
+            throw new AppErrors(
+                "Invalid or expired Google token",
+                StatusCodes.UNAUTHORIZED
+            );
+        }
+
+        const payload = await googleRes.json();
+        if (!payload.email || (payload.email_verified !== "true" && payload.email_verified !== true)) {
+            throw new AppErrors(
+                "Google account email is not verified",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        // Audience verification (prevents cross-client token replay attacks)
+        if (ServerConfig.GOOGLE_CLIENT_ID && payload.aud !== ServerConfig.GOOGLE_CLIENT_ID) {
+            throw new AppErrors(
+                "Google token audience mismatch",
+                StatusCodes.UNAUTHORIZED
+            );
+        }
+
+        // Check if user already exists
+        let user = await userRepo.getUserByEmail(payload.email);
+
+        if (!user) {
+            // Generate safe username matching /^[a-zA-Z0-9._]+$/
+            let baseName = (payload.name || payload.email.split("@")[0])
+                .replace(/[^a-zA-Z0-9._]/g, "")
+                .toLowerCase();
+            if (baseName.length < 3) {
+                baseName = "user_" + Date.now().toString().slice(-4);
+            }
+
+            let username = baseName;
+            let suffix = 1;
+            while (await userRepo.getUserByUsername(username)) {
+                username = `${baseName}${suffix}`;
+                suffix++;
+            }
+
+            // Generate secure random password (will be hashed by model pre-save hook)
+            const randomPassword = crypto.randomBytes(16).toString("hex");
+
+            user = await userRepo.create({
+                username,
+                email: payload.email,
+                password: randomPassword,
+            });
+        }
+
+        // Issue JWT token
+        const jwtToken = Auth.createToken(
+            user._id,
+            ServerConfig.SECRET_KEY,
+            { expiresIn: ServerConfig.EXPIRE_IN }
+        );
+
+        // Cache in Redis if available
+        const redisClient = getRedisClient();
+        if (redisClient) {
+            const decoded = Auth.verifyToken(jwtToken, ServerConfig.SECRET_KEY);
+            const ttl = decoded.exp - Math.floor(Date.now() / 1000);
+            await redisClient.setEx(
+                `auth:${jwtToken}`,
+                ttl,
+                JSON.stringify(decoded)
+            );
+        }
+
+        return jwtToken;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 module.exports = {
     createUser,
     signIn,
     isAuthenicated,
     logOut,
+    googleSignIn,
 };

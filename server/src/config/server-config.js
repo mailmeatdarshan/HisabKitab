@@ -13,4 +13,5 @@ module.exports = {
   GMAIL_PASS: process.env.EMAIL_PASS,
   REDIS_URL: process.env.REDIS_URL,
   CORS_ORIGIN: (process.env.CORS_ORIGIN || "http://localhost:5173").trim().replace(/\/+$/, ""),
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 };
