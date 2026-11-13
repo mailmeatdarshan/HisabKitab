@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import lottie from "lottie-web";
 import {
   TrendingUp,
@@ -69,6 +69,7 @@ export default function LandingPage() {
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
+    if (authenticated) return;
     localStorage.setItem("hisabkitab_visited_before", "true");
 
     const handleScroll = () => {
@@ -77,7 +78,12 @@ export default function LandingPage() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [authenticated]);
+
+  // Immediately redirect already authenticated users to the main app dashboard
+  if (authenticated) {
+    return <Navigate to="/app" replace />;
+  }
 
   // Clicking brand name scrolls smoothly to top of landing page
   const handleBrandClick = () => {

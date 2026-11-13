@@ -6,6 +6,8 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowLeft,
+  ArrowUpRight,
+  ArrowDownLeft,
   Plus,
   Minus,
   FileDown,
@@ -398,13 +400,6 @@ export default function DebtsPanel({ onRefresh }) {
                   <span>Add Party</span>
                 </button>
               </form>
-
-              <div className="mt-5 pt-5 border-t border-slate-100 dark:border-zinc-800 text-xs text-slate-400 dark:text-zinc-500 space-y-1.5 leading-relaxed">
-                <p>💡 <strong>How it works:</strong></p>
-                <p>• Add party name once.</p>
-                <p>• Tap party to record <strong>You Gave</strong> and <strong>You Got</strong> entries.</p>
-                <p>• Download statement PDF anytime with 1 click.</p>
-              </div>
             </div>
           </div>
         </div>
@@ -531,8 +526,8 @@ export default function DebtsPanel({ onRefresh }) {
               onClick={() => setEntryModal({ open: true, type: "give" })}
               className="py-3 px-4 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition active:scale-98 cursor-pointer text-sm sm:text-base"
             >
-              <Minus className="w-5 h-5" />
-              <span>You Gave (-)</span>
+              <ArrowUpRight className="w-5 h-5" />
+              <span>You Gave</span>
             </button>
 
             <button
@@ -540,8 +535,8 @@ export default function DebtsPanel({ onRefresh }) {
               onClick={() => setEntryModal({ open: true, type: "get" })}
               className="py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition active:scale-98 cursor-pointer text-sm sm:text-base"
             >
-              <Plus className="w-5 h-5" />
-              <span>You Got (+)</span>
+              <ArrowDownLeft className="w-5 h-5" />
+              <span>You Got</span>
             </button>
           </div>
 
@@ -566,8 +561,8 @@ export default function DebtsPanel({ onRefresh }) {
                     <tr className="bg-slate-50 dark:bg-zinc-900/80 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider border-b border-slate-200 dark:border-zinc-800">
                       <th className="p-3">Date</th>
                       <th className="p-3">Description / Note</th>
-                      <th className="p-3 text-right">You Gave (-)</th>
-                      <th className="p-3 text-right">You Got (+)</th>
+                      <th className="p-3 text-right">You Gave</th>
+                      <th className="p-3 text-right">You Got</th>
                       <th className="p-3 text-right">Action</th>
                     </tr>
                   </thead>
@@ -628,7 +623,7 @@ export default function DebtsPanel({ onRefresh }) {
                     entryModal.type === "give" ? "bg-rose-600" : "bg-emerald-600"
                   }`}
                 >
-                  {entryModal.type === "give" ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                  {entryModal.type === "give" ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownLeft className="w-5 h-5" />}
                 </div>
                 <div>
                   <h3 className="font-extrabold text-slate-900 dark:text-white text-base">

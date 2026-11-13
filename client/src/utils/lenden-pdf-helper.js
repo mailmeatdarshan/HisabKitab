@@ -279,8 +279,8 @@ export function exportLenDenStatementPDF(party) {
           <tr>
             <th style="width: 18%;">Date</th>
             <th style="width: 37%;">Description / Note</th>
-            <th class="amount-col" style="width: 15%;">You Gave (-)</th>
-            <th class="amount-col" style="width: 15%;">You Got (+)</th>
+            <th class="amount-col" style="width: 15%;">You Gave</th>
+            <th class="amount-col" style="width: 15%;">You Got</th>
             <th class="amount-col" style="width: 15%;">Balance</th>
           </tr>
         </thead>

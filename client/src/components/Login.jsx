@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
+import { isUserAuthenticated } from "../utils/local-storage-helper";
 import lottie from "lottie-web";
 import {
   ArrowLeft,
@@ -153,6 +154,10 @@ export default function Login() {
       };
     }
   }, [googleClientId]);
+
+  if (isUserAuthenticated()) {
+    return <Navigate to="/app" replace />;
+  }
 
   const validate = () => {
     const errs = {};

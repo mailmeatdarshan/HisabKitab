@@ -616,8 +616,8 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
         </div>
       </div>
 
-      {/* Monthly Budget Card (Shown for financial tracker panels) */}
-      {!isSettings && (
+      {/* Monthly Budget Card (Shown only on Analytics screen) */}
+      {isChart && (
         <div className="mb-6 p-4 bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-2">
