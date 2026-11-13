@@ -385,7 +385,7 @@ export default function DebtsPanel({ onRefresh }) {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. John Doe, Ramesh Sharma"
+                    placeholder="e.g. Ramesh Sharma, Gupta Ji"
                     value={newPartyName}
                     onChange={(e) => setNewPartyName(e.target.value)}
                     className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#00C58D] text-slate-900 dark:text-white"

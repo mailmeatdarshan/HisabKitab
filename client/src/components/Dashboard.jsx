@@ -543,8 +543,19 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
             )}
             {!isChart && (
               <input
-                type="date"
-                className="border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 rounded-lg p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#00C58D] transition w-full sm:w-auto"
+                type={dateFilter ? "date" : "text"}
+                onFocus={(e) => (e.target.type = "date")}
+                onBlur={(e) => {
+                  if (!e.target.value) e.target.type = "text";
+                }}
+                placeholder="Select Date"
+                title="Select Date"
+                className="border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 rounded-lg p-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#00C58D] transition w-full sm:w-auto cursor-pointer"
+                style={{
+                  backgroundColor: isDark ? "#1C1C1E" : "#FFFFFF",
+                  color: isDark ? "#FFFFFF" : "#0F172A",
+                  borderColor: isDark ? "#3F3F46" : "#E2E8F0"
+                }}
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
               />
