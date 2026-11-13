@@ -34,7 +34,7 @@ export const CustomSidebarIcon = ({ className = "" }) => (
 const SIDEBAR_ITEMS = [
     { name: 'Analytics', path: '/app', icon: TrendingUp },
     { name: 'Expenses', path: '/app/recordlist', icon: FileSpreadsheet },
-    { name: 'Udhaar', path: '/app/debts', icon: Users },
+    { name: 'Len-Den', path: '/app/debts', icon: Users },
     { name: 'Subscriptions', path: '/app/subscriptions', icon: CreditCard },
     { name: 'Gullak', path: '/app/gullak', icon: PiggyBank },
     { name: 'Settings', path: '/app/settings', icon: Settings2 },
@@ -119,7 +119,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     const currentPath = location.pathname;
     let activeName = 'Analytics';
     if (currentPath === '/app/recordlist') activeName = 'Expenses';
-    else if (currentPath === '/app/debts') activeName = 'Udhaar';
+    else if (currentPath === '/app/debts') activeName = 'Len-Den';
     else if (currentPath === '/app/subscriptions') activeName = 'Subscriptions';
     else if (currentPath === '/app/gullak') activeName = 'Gullak';
     else if (currentPath === '/app/settings') activeName = 'Settings';

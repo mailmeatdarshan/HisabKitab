@@ -468,7 +468,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
       {/* Header: title + filters + view toggles */}
       <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center md:gap-4 mb-4">
         <h3 className="hidden md:block text-base md:text-lg font-bold px-2 md:py-4 text-slate-900 dark:text-white">
-          {isSettings ? "App Preferences & Settings" : isDebts ? "Udhaar (Lend/Borrow) Tracker" : isSubscriptions ? "Bills & Subscriptions" : isGullak ? "Gullak (Savings Goals)" : isChart ? "Expense Charts" : "Expense Records"}
+          {isSettings ? "App Preferences & Settings" : isDebts ? "Len-Den" : isSubscriptions ? "Bills & Subscriptions" : isGullak ? "Gullak (Savings Goals)" : isChart ? "Expense Charts" : "Expense Records"}
         </h3>
 
         {/* Filters (only show if not on subscriptions, debts, gullak, or settings panel) */}
@@ -586,7 +586,7 @@ const Dashboard = ({ records, onDelete, onRefresh }) => {
           <Users
             className={`w-6 h-6 cursor-pointer hover:text-indigo-500 transition ${isDebts ? "text-indigo-500 font-bold scale-110" : "text-slate-400 dark:text-zinc-500"}`}
             onClick={() => navigate("/app/debts")}
-            title="Udhaar Tracker"
+            title="Len-Den"
           />
           <CreditCard
             className={`w-6 h-6 cursor-pointer hover:text-blue-500 transition ${isSubscriptions ? "text-blue-500 font-bold scale-110" : "text-slate-400 dark:text-zinc-500"}`}

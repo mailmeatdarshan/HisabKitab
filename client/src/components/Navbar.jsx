@@ -26,7 +26,7 @@ export default function Navbar({
   const getScreenTitle = () => {
     const path = location.pathname;
     if (path === "/app/recordlist") return "Expenses";
-    if (path === "/app/debts") return "Udhaar";
+    if (path === "/app/debts") return "Len-Den";
     if (path === "/app/subscriptions") return "Subscriptions";
     if (path === "/app/gullak") return "Gullak";
     if (path === "/app/settings") return "Settings";

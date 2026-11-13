@@ -157,6 +157,70 @@ export const saveDebts = (debts) => {
   localStorage.setItem(`hisabkitab_debts_${prefix}`, JSON.stringify(debts));
 };
 
+export const getLenDenParties = () => {
+  const prefix = getActiveUserPrefix();
+  const data = localStorage.getItem(`hisabkitab_lenden_${prefix}`);
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      console.error("Failed to parse lenden parties", e);
+    }
+  }
+
+  // Automatic Migration from legacy debts if any
+  const legacyDebtsData = localStorage.getItem(`hisabkitab_debts_${prefix}`);
+  if (legacyDebtsData) {
+    try {
+      const legacyDebts = JSON.parse(legacyDebtsData);
+      if (Array.isArray(legacyDebts) && legacyDebts.length > 0) {
+        const partyMap = {};
+        legacyDebts.forEach((d) => {
+          const personName = (d.person || "Unknown").trim();
+          if (!partyMap[personName]) {
+            partyMap[personName] = {
+              id: `party_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+              name: personName,
+              createdAt: d.dueDate ? new Date(d.dueDate).toISOString() : new Date().toISOString(),
+              entries: [],
+            };
+          }
+          partyMap[personName].entries.push({
+            id: d.id || `entry_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            type: d.type === "lent" ? "give" : "get",
+            amount: parseFloat(d.amount) || 0,
+            date: d.dueDate || new Date().toISOString().split("T")[0],
+            note: d.note || (d.type === "lent" ? "Given" : "Received"),
+            createdAt: d.dueDate ? new Date(d.dueDate).toISOString() : new Date().toISOString(),
+          });
+          if (d.settled) {
+            partyMap[personName].entries.push({
+              id: `settle_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+              type: d.type === "lent" ? "get" : "give",
+              amount: parseFloat(d.amount) || 0,
+              date: d.settledDate || new Date().toISOString().split("T")[0],
+              note: `[Settled] ${d.note || "Settlement"}`,
+              createdAt: new Date().toISOString(),
+            });
+          }
+        });
+        const migrated = Object.values(partyMap);
+        saveLenDenParties(migrated);
+        return migrated;
+      }
+    } catch (err) {
+      console.error("Failed to migrate legacy debts", err);
+    }
+  }
+
+  return [];
+};
+
+export const saveLenDenParties = (parties) => {
+  const prefix = getActiveUserPrefix();
+  localStorage.setItem(`hisabkitab_lenden_${prefix}`, JSON.stringify(parties));
+};
+
 export const getGullakGoals = () => {
   const prefix = getActiveUserPrefix();
   const data = localStorage.getItem(`hisabkitab_gullak_${prefix}`);

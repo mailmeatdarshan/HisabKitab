@@ -113,7 +113,7 @@ export default function LandingPage() {
     },
     {
       icon: Handshake,
-      text: "Alleviate debt tension with clean bilateral Udhaar logs",
+      text: "Alleviate financial tension with clean bilateral Len-Den transaction logs",
     },
     {
       icon: PiggyBank,
@@ -152,11 +152,11 @@ export default function LandingPage() {
     },
     {
       id: "udhaar",
-      name: "Udhaar Tracker",
+      name: "Len-Den",
       lottiePath: "/udhaar.json",
-      title: "Peer-to-Peer Lend & Borrow Bookkeeping",
+      title: "Party & Customer Len-Den Bookkeeping",
       description:
-        "Keep a bilateral running ledger of loans given or received among friends and colleagues, with instant settlement tracking.",
+        "Keep a running bilateral ledger of payments given or received with parties & customers, with instant PDF statements and settlement tracking.",
       route: "/app/debts",
     },
     {
